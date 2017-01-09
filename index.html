@@ -16,6 +16,9 @@
              }
              #content { margin-top:20px; }
 
+            .box {
+                margin-top:-20px;
+            }
         </style>
     </head>
     <body class="container" ng-app="sporikApp" ng-controller="sporikDashboard as main">
@@ -27,8 +30,13 @@
                 <li><a href="/elmer/www/dashboard.php"><i class="fa fa-camera"></i> Kamery</a></li>
                 <li><a href="/pos"><i class="fa fa-eur"></i> PoS</a></li>
             </ul> -->
-            <h1>Spořík v0.1 &nbsp;<span id="loading" ng-show="!main.loaded" class="badge">Loading...</span></h1> 
-            
+            <div class="box pull-right">
+                <label class="label label-default">P1: {{ main.elmer['P1A+'] / 10 }} W</label><br>
+                <label class="label label-default">P2: {{ main.elmer['P2A+'] / 10 }} W</label><br>
+                <label class="label label-default">P3: {{ main.elmer['P3A+'] / 10 }} W</label> 
+            </div>
+
+            <h1>Spořík v0.2 &nbsp;<span id="loading" ng-show="!main.loaded" class="badge">Loading...</span></h1> 
         </header>
         
 
@@ -38,6 +46,7 @@
                 Žádné zařízení není připojeno
                 <button class="btn btn-outline btn-warning pull-right" ng-click="main.load()">Refresh</button>
             </div>
+
             <div ng-repeat="item in main.devices" class="col-md-8 col-md-offset-2 clearfix panel panel-default" ng-cloak>
                 <div class="info" ng-show="!main.showMore(item.address)">
                     <h4>Zařízení: <label>{{ item.address }}</label></h4>

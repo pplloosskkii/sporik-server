@@ -23,7 +23,7 @@ console.log('initting');
 //routes.listen(9009);
 
 
-var client  = mqtt.connect('mqtt://172.16.0.123');
+var client  = mqtt.connect('mqtt://192.168.1.99');
 
 var Device = function (address) {  
 
@@ -89,19 +89,37 @@ var DeviceList = function (mqtt) {
 	};
 }
 
-var devices = new DeviceList(client);
+var Elmer = function () {
+	var data = {};
+	return {
+		set: function (obj) {
+			data = obj;
+		},
+		get: function() {
+			return data;
+		}
+	}
+}
 
+var devices = new DeviceList(client);
+var elmer = new Elmer();
 
 client.on('connect', function () {
 	console.log('subscribing to all')
 	client.subscribe('sporik/connect');
 	client.subscribe('sporik/measurement');
 	client.subscribe('sporik/state');
+	client.subscribe('sporik/elmer');
 })
 
 client.on('message', function (topic, message) {
 	//console.log('got message in:', topic);
 	var msg = JSON.parse(message.toString().trim());
+
+
+	if (topic == 'sporik/elmer') {
+		elmer.set(msg);
+	}
 
 	if (topic == 'sporik/connect') {
 		devices.register(msg.address);
@@ -139,6 +157,10 @@ app.get('/api/get/:id',function(req,res){
 		return res.status(404).json({ ok: false, reason: "404 Not Found" });
 	}
 	res.json(ret.get());
+});
+
+app.get('/api/elmer',function(req,res){
+	res.json(elmer.get());
 });
 
 app.put('/api/toggle/:id',function(req,res){
