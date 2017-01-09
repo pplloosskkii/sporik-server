@@ -12,7 +12,9 @@
   "dependencies": {
     "angular": "^1.6.1",
     "bootstrap": "^3.3.7",
-    "dictionaryjs": "0.0.12"
+    "dictionaryjs": "0.0.12",
+    "express": "^4.14.0",
+    "mqtt": "^2.2.1"
   },
   "devDependencies": {
     "local-web-server": "^0.5.24"
