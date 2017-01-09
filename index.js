@@ -1,15 +1,12 @@
 var mqtt = require('mqtt');
-//var devices = [];
-
 var app = require('express')();
 var http = require('http').Server(app);
-
 var Dictionary = require('dictionaryjs');
-
 var bodyParser = require("body-parser");
+
+
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-
 app.use(function (req, res, next) {
     res.setHeader('Access-Control-Allow-Origin', 'http://172.16.0.123:8000');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
@@ -18,15 +15,11 @@ app.use(function (req, res, next) {
     next();
 });
 
-
 console.log('initting');
-//routes.listen(9009);
-
 
 var client  = mqtt.connect('mqtt://192.168.1.99');
 
 var Device = function (address) {  
-
 	var obj = {
 		address: null, 
 		state: null, 
@@ -67,7 +60,6 @@ var Device = function (address) {
 			return (new Date().valueOf()) - obj.lastMeasurementChange < 30000; // older than 30s are dead
 		},
 	}
-
 };
 
 
@@ -89,6 +81,7 @@ var DeviceList = function (mqtt) {
 	};
 }
 
+
 var Elmer = function () {
 	var data = {};
 	return {
@@ -104,6 +97,7 @@ var Elmer = function () {
 var devices = new DeviceList(client);
 var elmer = new Elmer();
 
+
 client.on('connect', function () {
 	console.log('subscribing to all')
 	client.subscribe('sporik/connect');
@@ -115,8 +109,7 @@ client.on('connect', function () {
 client.on('message', function (topic, message) {
 	//console.log('got message in:', topic);
 	var msg = JSON.parse(message.toString().trim());
-
-
+	
 	if (topic == 'sporik/elmer') {
 		elmer.set(msg);
 	}

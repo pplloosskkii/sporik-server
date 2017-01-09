@@ -23,14 +23,7 @@
     </head>
     <body class="container" ng-app="sporikApp" ng-controller="sporikDashboard as main">
         <header class="page-header">
-<!--             <ul class="nav nav-pills pull-right">
-                <li><a href="/bazos"><i class="fa fa-random"></i> Bazoš agent</a></li>
-                <li class="active"><a href="/vyvesky"><i class="fa fa-sticky-note-o"></i> Vývěsky agent</a></li>
-                <li><a href="/elmer/www"><i class="fa fa-tachometer"></i> Elměr</a></li>
-                <li><a href="/elmer/www/dashboard.php"><i class="fa fa-camera"></i> Kamery</a></li>
-                <li><a href="/pos"><i class="fa fa-eur"></i> PoS</a></li>
-            </ul> -->
-            <div class="box pull-right">
+            <div class="box pull-right" ng-if="main.elmer.ok == true">
                 <label class="label label-default">P1: {{ main.elmer['P1A+'] / 10 }} W</label><br>
                 <label class="label label-default">P2: {{ main.elmer['P2A+'] / 10 }} W</label><br>
                 <label class="label label-default">P3: {{ main.elmer['P3A+'] / 10 }} W</label> 
@@ -38,8 +31,6 @@
 
             <h1>Spořík v0.2 &nbsp;<span id="loading" ng-show="!main.loaded" class="badge">Loading...</span></h1> 
         </header>
-        
-
 
         <div class="row" ng-cloak id="content">
             <div ng-if="main.devices.length == 0" class="alert alert-warning col-md-6 col-md-offset-3">
