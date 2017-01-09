@@ -5,7 +5,6 @@ var app = require('express')();
 var http = require('http').Server(app);
 
 var Dictionary = require('dictionaryjs');
-var devices = new Dictionary();
 
 var bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -33,7 +32,9 @@ var Device = function (address) {
 		state: null, 
 		lastStateChange: null,
 		measurementValue: null, 
-		lastMeasurement: null,
+		lastMeasurementChange: null,
+		regulationValue: null,
+		lastRegulationChange: null,
 	};
 
 	obj.address = address;
@@ -49,7 +50,7 @@ var Device = function (address) {
 		},
 		setMeasurement: function (value) {
 			console.log("measured: ", value);
-			obj.lastMeasurement = new Date().valueOf();
+			obj.lastMeasurementChange = new Date().valueOf();
 			obj.measurementValue = value;
 		},
 		setState: function (state) {
@@ -57,12 +58,38 @@ var Device = function (address) {
 			obj.lastStateChange = new Date().valueOf();
 			obj.state = state;
 		},
+		setRegulationValue: function (value) {
+			console.log("regulated from: ", obj.regulationValue, "to:", value);
+			obj.lastRegulationChange = new Date().valueOf();
+			obj.regulationValue = value;
+		},
 		isAlive: function () {
-			return (new Date().valueOf()) - obj.lastMeasurement > 30; // older than 30s are dead
+			return (new Date().valueOf()) - obj.lastMeasurementChange < 30000; // older than 30s are dead
 		},
 	}
 
 };
+
+
+var DeviceList = function (mqtt) {
+	var devices = new Dictionary();
+
+	return {
+		list: function () {
+			return devices;
+		},
+		register: function (address) {
+			if (!devices.has(address)) {
+				devices.add(address, new Device(address));
+			}
+
+			mqtt.publish('sporik/register', '{"address": "' + address + '"}');
+			return devices.get(address);
+		}
+	};
+}
+
+var devices = new DeviceList(client);
 
 
 client.on('connect', function () {
@@ -77,32 +104,28 @@ client.on('message', function (topic, message) {
 	var msg = JSON.parse(message.toString().trim());
 
 	if (topic == 'sporik/connect') {
-		devices.set(msg.address, new Device(msg.address));
-		client.publish('sporik/register', '{"address": "' + msg.address + '"}');
+		devices.register(msg.address);
 	}
 
-	if (topic == 'sporik/state') {
-		if (!devices.has(msg.address)) {
-			devices.add(msg.address, new Device(msg.address));
-		}
-		
-		var device = devices.get(msg.address);
-		device.setState(msg.state ? msg.state : msg.value);
+	if (topic == 'sporik/relay-state') {
+		var device = devices.register(msg.address);
+		device.setState(msg.state);
+	}
+
+	if (topic == 'sporik/triac-value') {
+		var device = devices.register(msg.address);
+		device.setRegulationValue(msg.value);
 	}
 
 	if (topic == 'sporik/measurement') {
-
-		if (!devices.has(msg.address)) {
-			devices.add(msg.address, new Device(msg.address));
-		}
-		var device = devices.get(msg.address);
+		var device = devices.register(msg.address);
 		device.setMeasurement(msg.value);
 	}
 })
 
 app.get('/api/list',function(req, res){
 	ret = [];
-	devices.forEach(function(key, device) {
+	devices.list().forEach(function(key, device) {
 		if (device.isAlive()) {
 			ret.push(device.get());
 		}
@@ -111,7 +134,7 @@ app.get('/api/list',function(req, res){
 });
 
 app.get('/api/get/:id',function(req,res){
-	var ret = devices.get(req.params.id);
+	var ret = devices.list().get(req.params.id);
 	if (typeof ret == 'undefined') {
 		return res.status(404).json({ ok: false, reason: "404 Not Found" });
 	}
