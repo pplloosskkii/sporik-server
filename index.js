@@ -4,11 +4,13 @@ var http = require('http').Server(app);
 var Dictionary = require('dictionaryjs');
 var bodyParser = require("body-parser");
 
+var DEBUG = false;
+
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(function (req, res, next) {
-    res.setHeader('Access-Control-Allow-Origin', 'http://172.16.0.123:8000');
+    res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
     res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
     res.setHeader('Access-Control-Allow-Credentials', true);
@@ -16,6 +18,8 @@ app.use(function (req, res, next) {
 });
 
 console.log('initting');
+
+var reconnectAddresses = ['0f0'];
 
 var client  = mqtt.connect('mqtt://192.168.1.99');
 
@@ -42,17 +46,17 @@ var Device = function (address) {
 			return obj;
 		},
 		setMeasurement: function (value) {
-			console.log("measured: ", value);
+			DEBUG && console.log("measured: ", value);
 			obj.lastMeasurementChange = new Date().valueOf();
 			obj.measurementValue = value;
 		},
 		setState: function (state) {
-			console.log("changing state from:", obj.state, "to:", state);
+			DEBUG && console.log("changing state from:", obj.state, "to:", state);
 			obj.lastStateChange = new Date().valueOf();
 			obj.state = state;
 		},
 		setRegulationValue: function (value) {
-			console.log("regulated from: ", obj.regulationValue, "to:", value);
+			DEBUG && console.log("regulated from: ", obj.regulationValue, "to:", value);
 			obj.lastRegulationChange = new Date().valueOf();
 			obj.regulationValue = value;
 		},
@@ -72,7 +76,7 @@ var DeviceList = function (mqtt) {
 		},
 		register: function (address) {
 			if (!devices.has(address)) {
-				devices.add(address, new Device(address));
+				devices.set(address, new Device(address));
 			}
 
 			mqtt.publish('sporik/register', '{"address": "' + address + '"}');
@@ -94,6 +98,18 @@ var Elmer = function () {
 	}
 }
 
+// parse incoming message to json
+// fix damaged record from arduino
+function parseMessage(message) {
+	var ret = {};
+	try {
+		ret = JSON.parse(message.toString().trim());
+	} catch (e) {
+		
+	}
+	return ret;
+}
+
 var devices = new DeviceList(client);
 var elmer = new Elmer();
 
@@ -102,13 +118,22 @@ client.on('connect', function () {
 	console.log('subscribing to all')
 	client.subscribe('sporik/connect');
 	client.subscribe('sporik/measurement');
-	client.subscribe('sporik/state');
+	client.subscribe('sporik/relay-state');
+	client.subscribe('sporik/triac-value');
 	client.subscribe('sporik/elmer');
+
+	// TODO MUST REMOVE SOON
+	// should reconnect last-connected devices
+	// or sort it in arduino
+	for (var i in reconnectAddresses) {
+		devices.register(reconnectAddresses[i]);
+	}
 })
 
 client.on('message', function (topic, message) {
-	//console.log('got message in:', topic);
-	var msg = JSON.parse(message.toString().trim());
+	DEBUG && console.log('got message in:', topic);
+	var msg = parseMessage(message);
+	
 	
 	if (topic == 'sporik/elmer') {
 		elmer.set(msg);
@@ -157,18 +182,18 @@ app.get('/api/elmer',function(req,res){
 });
 
 app.put('/api/toggle/:id',function(req,res){
-	console.log('got toggle command for id', req.params.id);
+	DEBUG && console.log('got toggle command for id', req.params.id);
 	client.publish('sporik/toggle', '{"address": "' + req.params.id + '"}');
 	res.json({"ok":true});
 });
 
 app.put('/api/regulate/:id/:value',function(req,res){
-	console.log('got regulate command for id', req.params.id, 'value', req.params.value);
+	DEBUG && console.log('got regulate command for id', req.params.id, 'value', req.params.value);
 	client.publish('sporik/regulate', '{"address": "' + req.params.id + '", "value": ' + req.params.value + '}');
 	res.json({"ok":true});
 });
 
 // Start and initialize the node server on local host port 8080
-http.listen(9000,function(){
+http.listen(9009,function(){
 	console.log("Connected HTTP");
 });

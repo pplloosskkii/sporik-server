@@ -37,23 +37,20 @@
                 Žádné zařízení není připojeno
                 <button class="btn btn-outline btn-warning pull-right" ng-click="main.load()">Refresh</button>
             </div>
-
-            <div ng-repeat="item in main.devices" class="col-md-8 col-md-offset-2 clearfix panel panel-default" ng-cloak>
-                <div class="info" ng-show="!main.showMore(item.address)">
+            <div class="container">
+            <div ng-repeat="item in main.devices" class="col-md-4 clearfix panel panel-default" ng-cloak>
+                <div class="info">
+                {{ item}}
                     <h4>Zařízení: <label>{{ item.address }}</label></h4>
-                    Aktuální spotřeba: <label>{{ item.value }}W</label>
-                    <button ng-click="main.showMore(item.address, true)" class="btn pull-right btn-sm">More...</button>
-                </div>
-                <div class="info" ng-show="main.showMore(item.address)">
-                    <h4>Zařízení: <label>{{ item.address }}</label></h4>
-                    <input type="range" min="1" max="8499"xxdxz ng-model="main.dataValue" ng-change="main.regulate(item.address, main.dataValue)" ng-model-options="{debounce:200}" />
+                    <input type="range" min="1" max="8499" ng-model="main.dataValue" ng-change="main.regulate(item.address, main.dataValue)" ng-model-options="{debounce:200}" />
                     {{ main.dataValue }}
                     <br><br>
-                    Aktuální spotřeba: <label>{{ item.value }}W</label>
+                    Aktuální spotřeba: <label>{{ item.measurementValue }}W</label>
                     <button ng-click="main.regulate(item.address, main.dataValue)" class="btn pull-right btn-sm">Regulate</button>
                     <button ng-click="main.toggle(item.address)" class="btn pull-right btn-sm btn-outline btn-danger">Toggle</button>
                 </div>
                 <br style="clear:both">
+            </div>
             </div>
         </div>
 

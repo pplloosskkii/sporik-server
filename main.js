@@ -2,11 +2,10 @@
 var sporikApp = angular.module('sporikApp', []);
 
 sporikApp.constant("ApiConfig", {
-    "url": "http://172.16.0.123:9000/api",
+    "url": "http://192.168.1.246:9009/api",
 });
 
 sporikApp.factory('Devices', ['$http', '$q', '$timeout', 'ApiConfig', function ($http, $q, $timeout, ApiConfig) {
-	var path = 'http://172.16.0.123:9000/api';
 	return {
 		list: function () {
 			var deferred = $q.defer();
