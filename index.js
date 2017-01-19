@@ -19,7 +19,7 @@ app.use(function (req, res, next) {
 
 console.log('initting');
 
-var reconnectAddresses = ['0f0'];
+var reconnectAddresses = ['sporik0', 'sporik1'];
 
 var client  = mqtt.connect('mqtt://192.168.1.99');
 
@@ -46,25 +46,40 @@ var Device = function (address) {
 			return obj;
 		},
 		setMeasurement: function (value) {
-			DEBUG && console.log("measured: ", value);
+			DEBUG && console.log(address + " measured: ", value);
 			obj.lastMeasurementChange = new Date().valueOf();
 			obj.measurementValue = value;
 		},
 		setState: function (state) {
-			DEBUG && console.log("changing state from:", obj.state, "to:", state);
-			obj.lastStateChange = new Date().valueOf();
-			obj.state = state;
+			if (obj.state != state) {
+				DEBUG && console.log(address + " changing state from:", obj.state, "to:", state);
+				obj.lastStateChange = new Date().valueOf();
+				obj.state = state;
+			}
 		},
 		setRegulationValue: function (value) {
-			DEBUG && console.log("regulated from: ", obj.regulationValue, "to:", value);
-			obj.lastRegulationChange = new Date().valueOf();
-			obj.regulationValue = value;
+			if (obj.regulationValue != value) {
+				DEBUG && console.log(address + " regulated from: ", obj.regulationValue, "to:", value);
+				obj.lastRegulationChange = new Date().valueOf();
+				obj.regulationValue = value;
+			}
 		},
 		isAlive: function () {
 			return (new Date().valueOf()) - obj.lastMeasurementChange < 30000; // older than 30s are dead
 		},
 	}
 };
+
+
+var DeviceRegulation = function () {
+	return {
+		tick: function () {
+
+		},
+	}
+}
+
+
 
 
 var DeviceList = function (mqtt) {
@@ -74,17 +89,16 @@ var DeviceList = function (mqtt) {
 		list: function () {
 			return devices;
 		},
-		register: function (address) {
-			if (!devices.has(address)) {
+		register: function (address, forcePublish) {
+			if (!devices.has(address) || forcePublish === true) {
 				devices.set(address, new Device(address));
+				mqtt.publish('sporik/register', '{"address": "' + address + '"}');
 			}
 
-			mqtt.publish('sporik/register', '{"address": "' + address + '"}');
 			return devices.get(address);
 		}
 	};
 }
-
 
 var Elmer = function () {
 	var data = {};
@@ -99,7 +113,6 @@ var Elmer = function () {
 }
 
 // parse incoming message to json
-// fix damaged record from arduino
 function parseMessage(message) {
 	var ret = {};
 	try {
@@ -140,7 +153,7 @@ client.on('message', function (topic, message) {
 	}
 
 	if (topic == 'sporik/connect') {
-		devices.register(msg.address);
+		devices.register(msg.address, true);
 	}
 
 	if (topic == 'sporik/relay-state') {
@@ -155,6 +168,8 @@ client.on('message', function (topic, message) {
 
 	if (topic == 'sporik/measurement') {
 		var device = devices.register(msg.address);
+		device.setRegulationValue(msg.r);
+		device.setState(msg.s);
 		device.setMeasurement(msg.value);
 	}
 })

@@ -1,0 +1,28 @@
+.ng-cloak { display:none !important; }
+ #content { margin-top:20px; }
+
+.box {
+    margin-top:-20px;
+}
+
+#bar-chart {
+    float:right;
+    margin-left:40px;
+}
+
+.p1 {
+	background-color:#c00 !important;
+}
+
+.p2 {
+	background-color:#0c0 !important;
+}
+
+.p3 {
+	background-color:#0cc !important;
+}
+
+.panel {
+	padding:10px;
+}
+
