@@ -5,7 +5,7 @@ sporikApp.directive('deviceChart', [function() {
     scope: {
       data: '='
     },
-    template: '<div><canvas id="line" class="chart chart-line" chart-data="all" chart-options="options" chart-labels="labels"></canvas></div>',
+    template: '<div><canvas id="line" class="chart chart-line" chart-data="all" chart-options="options" chart-labels="labels" height="100"></canvas></div>',
     link: function(scope, element, attrs) {
       scope.all = [[]];
       scope.labels = [];

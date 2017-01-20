@@ -14,15 +14,16 @@
     <body class="container" ng-app="sporikApp" ng-controller="sporikDashboard as main">
         <header class="page-header">
             <elmer-reading></elmer-reading>
-            <h1>Spořík v0.2 &nbsp;</h1> 
+            <elmer-chart data="elmer"></elmer-chart>
+            <h1>Spořík v0.3</h1> 
         </header>
 
         <div class="row" ng-cloak id="content" device-list></div>
     </body>
 
-    <script src="./node_modules/angular/angular.js"></script>
-    <script src="./node_modules/chart.js/dist/Chart.js"></script>
-    <script src="./node_modules/angular-chart.js/dist/angular-chart.js"></script>
+    <script src="./node_modules/angular/angular.min.js"></script>
+    <script src="./node_modules/chart.js/dist/Chart.min.js"></script>
+    <script src="./node_modules/angular-chart.js/dist/angular-chart.min.js"></script>
     <script src="./app/www/main.js"></script>
     <script src="./app/www/Devices.js"></script>
     <script src="./app/www/elmer/Elmer.js"></script>
