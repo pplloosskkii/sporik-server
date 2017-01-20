@@ -3,7 +3,7 @@
     <button class="btn btn-outline btn-warning pull-right" ng-click="main.load()">Refresh</button>
 </div>
 <div class="container">
-<div ng-repeat="item in devices" class="col-md-4 clearfix" ng-cloak>
+<div ng-repeat="item in devices track by item.addres" class="col-md-4 clearfix" ng-cloak>
 	<div class="panel panel-default">
 	    <div class="info" device="item">
 	    </div>

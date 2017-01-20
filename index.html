@@ -7,23 +7,19 @@
         <meta charset="utf-8" />
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-        <title>Spořík v0.2</title>
+        <title>Spořík v0.3</title>
         <link rel="stylesheet" media="all" href="./node_modules/bootstrap/dist/css/bootstrap.min.css" type="text/css" />
         <link rel="stylesheet" media="all" href="./app/www/main.css" type="text/css" />
     </head>
     <body class="container" ng-app="sporikApp" ng-controller="sporikDashboard as main">
         <header class="page-header">
-<!--             <chart data="elmer" class="box elmer"></chart> -->
             <elmer-reading></elmer-reading>
-
             <h1>Spořík v0.2 &nbsp;</h1> 
         </header>
 
-        <div class="row" ng-cloak id="content" device-list>
- 
-        </div>
-
+        <div class="row" ng-cloak id="content" device-list></div>
     </body>
+
     <script src="./node_modules/angular/angular.js"></script>
     <script src="./node_modules/chart.js/dist/Chart.js"></script>
     <script src="./node_modules/angular-chart.js/dist/angular-chart.js"></script>
@@ -34,7 +30,6 @@
     <script src="./app/www/elmer/ElmerGraph.js"></script>
     <script src="./app/www/device/device.js"></script>
     <script src="./app/www/device/deviceList.js"></script>
+    <script src="./app/www/device/deviceChart.js"></script>
     <script src="./app/www/DashboardCtrl.js"></script>
-    
-    <script src="//d3js.org/d3.v3.min.js" charset="utf-8"></script>
 </html>

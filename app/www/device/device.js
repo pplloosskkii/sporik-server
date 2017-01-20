@@ -6,7 +6,7 @@ sporikApp.directive('device', ['$timeout', 'Devices', function($timeout, Devices
 		},
 		templateUrl: './app/www/device/device.html',
 		link: function(scope, element, attrs) {
-			scope.device.regulationValue = scope.device.regulationValue || 1;
+			scope.device.regulation = scope.device.regulation || 1;
 			scope.state = { isToggling: false, desiredToggle: scope.device.state };
 
 			scope.$watch(scope.device, function (device) {
@@ -16,7 +16,7 @@ sporikApp.directive('device', ['$timeout', 'Devices', function($timeout, Devices
 			});
 
 			scope.device.regulate = function () {
-				Devices.regulate(scope.device.address, scope.device.regulationValue).then(function (data) {
+				Devices.regulate(scope.device.address, scope.device.regulation).then(function (data) {
 					console.log('regulated');
 				});
 			};

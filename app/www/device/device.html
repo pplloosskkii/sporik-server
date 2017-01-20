@@ -1,11 +1,12 @@
-<!-- {{ item}} -->
-<h4>Zařízení: <label>{{ device.address }}</label></h4>
-<input type="range" min="1" max="8499" ng-model="device.regulationValue" ng-change="device.regulate()" ng-model-options="{debounce:200}" />
-{{ device.regulationValue }}
+<h4><label>{{ device.alias }}</label> <small>({{ device.description }})</small></h4>
+<input type="range" min="1" max="8500" ng-model="device.regulation" ng-change="device.regulate()" ng-model-options="{debounce:200}" />
 <br>
-Aktuální spotřeba: <label>{{ device.measurementValue }}W</label>
-<!-- <button ng-click="device.regulate()" class="btn pull-right btn-sm">Regulate</button> -->
-<button ng-click="device.toggle()" class="btn pull-right btn-sm" ng-class="{ 'btn-primary': !device.isOn(), 'btn-success': device.isOn() }">
-{{ (device.isOn() ? 'Vypnout' : 'Zapnout')}}
-<span ng-show="state.isToggling">...</span>
-</button>
+<!-- Aktuální spotřeba: <label>{{ device.measurement }}W</label> -->
+<device-chart data="device.measurement"></device-chart>
+<div class="clearfix">
+	<label>{{ device.measurement }} W</label>
+	<button ng-click="device.toggle()" class="btn pull-right btn-sm" ng-class="{ 'btn-primary': !device.isOn(), 'btn-success': device.isOn() }">
+		{{ (device.isOn() ? 'Vypnout' : 'Zapnout')}}
+		<span ng-show="state.isToggling">...</span>
+	</button>
+</div>
