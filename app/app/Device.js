@@ -1,4 +1,6 @@
 var DeviceDb = require('./DeviceDb')();
+var mqtt = require('mqtt');
+var client  = mqtt.connect('mqtt://192.168.1.99');
 
 var DEBUG = false;
 
@@ -6,8 +8,8 @@ var DEBUG = false;
 var Device = function (param) {  
 	var obj = {
 		address: null, 
-		state: null, 
-		state_changed_at: null,
+		autorun: null, 
+		autorun_max: null, 
 		measurement: null, 
 		measurement_changed_at: null,
 		regulation: null,
@@ -33,9 +35,11 @@ var Device = function (param) {
 			}
 		},
 		get: function() {
+			obj.measurement_recount = Math.max(0, (obj.max_consumption / 100) * obj.regulation);
 			return obj;
 		},
-		update: function (param) {
+		update: function (param, publish) {
+			var publish = publish || false;
 			var timestamp = new Date().valueOf();
 			for (var i in param) {
 				obj[i] = param[i];
@@ -43,10 +47,21 @@ var Device = function (param) {
 				param[i + '_changed_at'] = timestamp;
 			}
 			DeviceDb.device.update(obj.address, param);
+
+			if (publish && typeof param['regulation'] !== 'undefined') {
+				client.publish('sporik/regulate', '{"address": "' + obj.address + '", "value": ' + param['regulation'] + '}');
+			}
 		},
 		isAlive: function () {
 			return (new Date().valueOf()) - obj.measurement_changed_at < 30000; // older than 30s are dead
 		},
+		isRegulable: function () {
+			return (obj.autorun == true && obj.autorun_max > 0);
+		},
+		setRegulationMode: function (mode) {
+			obj['autorun'] = mode;
+			DeviceDb.device.update(obj.address, { 'autorun': mode });
+		}
 	}
 };
 

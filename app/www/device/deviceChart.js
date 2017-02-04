@@ -1,4 +1,4 @@
-sporikApp.directive('deviceChart', [function() {
+sporikApp.directive('deviceChart', ['$timeout', function($timeout) {
   return {
     restrict: 'E',
     replace:true,
@@ -13,17 +13,31 @@ sporikApp.directive('deviceChart', [function() {
         animation: {
           duration: 0
         },
+        scales: {
+            yAxes: [{
+                ticks: {
+                    beginAtZero:true
+                }
+            }]
+        }
       };
 
-    	scope.$watch('data', function (newVal, oldVal) {
-        scope.all[0].push(newVal);
+    	//scope.$watch('data', function (newVal, oldVal) {
+
+
+      scope.go = function () {
+        scope.all[0].push(scope.data);
         scope.labels.push('');
 
         if (scope.all[0].length > 20) {
           scope.all[0].shift();
           scope.labels.shift();
         }
-    	});
+
+        $timeout(scope.go, 2000);
+    	};
+
+      scope.go();
   	}
 }
 }]);

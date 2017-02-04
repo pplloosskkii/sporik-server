@@ -1,12 +1,18 @@
-<h4><label>{{ device.alias }}</label> <small>({{ device.description }})</small></h4>
-<input type="range" min="1" max="8499" ng-model="device.regulation" ng-change="regulate()" ng-model-options="{debounce:200}" />
-<br>
-<!-- Aktuální spotřeba: <label>{{ device.measurement }}W</label> -->
-<device-chart data="device.measurement"></device-chart>
-<div class="clearfix">
-	<label>{{ device.measurement }} W</label>
-	<button ng-click="toggle()" class="btn pull-right btn-sm" ng-class="{ 'btn-primary': !isOn(), 'btn-success': isOn() }">
-		{{ (isOn() ? 'Vypnout' : 'Zapnout')}}
-		<span ng-show="state.isToggling">...</span>
-	</button>
+<div class="device">
+	<h4><label>{{ device.alias }}</label> <small>({{ device.description }})</small></h4>
+	<div class="range-container">
+		<span class="font-smaller left">0&nbsp;W</span>
+		<input type="range" min="0" max="100" ng-model="device.regulation" ng-change="regulate()" ng-model-options="{debounce:200}" ng-disabled="isAutorun()" title="{{ device.regulation }}%"/>
+		<span class="font-smaller right">{{ device.max_consumption }}&nbsp;W</span>
+	</div>
+	<device-chart data="device.measurement_recount"></device-chart>
+	<div class="clearfix">
+		<label>{{ device.measurement_recount }}&nbsp;W</label>
+		
+		<div class="pull-right">
+		<label style="margin-right: 10px;"><input type="checkbox" ng-checked="isAutorun()" ng-click="toggleAutorun()"/> Automaticky </label>
+		<button ng-if="isOn()" ng-click="device.regulation = 0; regulate();" class="btn btn-sm btn-success" ng-disabled="isAutorun()">Vypnout</button>
+		<button ng-if="!isOn()" ng-click="device.regulation = 100; regulate();" class="btn btn-sm btn-primary" ng-disabled="isAutorun()">Zapnout</button>
+		</div>
+	</div>
 </div>

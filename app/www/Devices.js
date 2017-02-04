@@ -16,9 +16,9 @@ sporikApp.factory('Devices', ['$http', '$q', '$timeout', 'ApiConfig', function (
 			return deferred.promise;
 		},
 
-		toggle: function (address) {
+		setAutorun: function (address, value) {
 			var deferred = $q.defer();
-			$http.put(ApiConfig.url + '/toggle/' + address).then(function(data, status, headers, config) {
+			$http.put(ApiConfig.url + '/autorun/' + address + "/" + (value + 0)).then(function(data, status, headers, config) {
 				deferred.resolve(data);
 			}, deferred.reject);
 			return deferred.promise;

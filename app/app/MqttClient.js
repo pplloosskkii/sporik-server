@@ -2,6 +2,7 @@ var mqtt = require('mqtt');
 var client  = mqtt.connect('mqtt://192.168.1.99');
 var DeviceList = require('./DeviceList');
 var Elmer = require('./Elmer')();
+var DeviceRegulator = require('./DeviceRegulator')();
 
 var DEBUG = false;
 
@@ -37,16 +38,11 @@ client.on('message', function (topic, message) {
 	
 	if (topic == 'sporik/elmer') {
 		Elmer.set(msg);
+		DeviceRegulator.tick(Elmer, devices);
 	}
 
 	if (topic == 'sporik/connect') {
-		register(msg.address, true).then(function (device) {
-		});
-	}
-
-	if (topic == 'sporik/relay-state') {
-		devices.register(msg.address).then(function (device) {
-			device.update({ 'state': msg.state });
+		devices.register(msg.address, true).then(function (device) {
 		});
 	}
 
@@ -58,7 +54,7 @@ client.on('message', function (topic, message) {
 
 	if (topic == 'sporik/measurement') {
 		devices.register(msg.address).then(function (device) {
-			device.update({ 'regulation': msg.r, 'state': msg.s, 'measurement': msg.value });
+			device.update({ 'regulation': msg.r, 'measurement': msg.value });
 		});
 	}
 })

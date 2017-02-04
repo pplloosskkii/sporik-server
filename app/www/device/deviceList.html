@@ -1,9 +1,9 @@
 <div ng-if="devices.length == 0" class="alert alert-warning col-md-6 col-md-offset-3">
     Žádné zařízení není připojeno
-    <button class="btn btn-outline btn-warning pull-right" ng-click="main.load()">Refresh</button>
+    <button class="btn btn-outline btn-warning pull-right" ng-click="main.load()">Obnovit</button>
 </div>
 <div class="container">
-<div ng-repeat="item in devices track by item.address" class="col-md-4 clearfix" ng-cloak>
+<div ng-repeat="item in devices track by item.address" class="col-md-6 clearfix" ng-cloak>
 	<div class="panel panel-default">
 	    <div class="info" device="item">
 	    </div>

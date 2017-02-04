@@ -6,8 +6,6 @@ var devices = require("./app/app/DeviceList")(client);
 var Elmer = require('./app/app/Elmer')();
 var DEBUG = false;
 
-
-
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(function (req, res, next) {
@@ -37,6 +35,17 @@ app.get('/api/get/:id',function(req,res){
 	}
 	res.json(ret.get());
 });
+
+
+app.put('/api/autorun/:id/:value',function(req,res){
+	var ret = devices.list().get(req.params.id);
+	if (typeof ret == 'undefined') {
+		return res.status(404).json({ ok: false, reason: "404 Not Found" });
+	}
+	ret.setRegulationMode(parseInt(req.params.value));
+	res.json({"ok":true});
+});
+
 
 app.get('/api/elmer',function(req,res){
 	res.json(Elmer.get());

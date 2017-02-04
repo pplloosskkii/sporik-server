@@ -6,29 +6,24 @@ sporikApp.directive('device', ['$timeout', 'Devices', function($timeout, Devices
 		},
 		templateUrl: './app/www/device/device.html',
 		link: function(scope, element, attrs) {
-			scope.device.regulation = scope.device.regulation || 1;
-			scope.state = { isToggling: false, desiredToggle: scope.device.state };
-
-			scope.$watch('device', function (device) {
-				if (device != null && typeof device != 'undefined' && device.state != scope.state.desiredToggle) {
-					scope.state.isToggling = false;
-				}
-			});
+			scope.device.regulation = scope.device.regulation || 0;
 
 			scope.regulate = function () {
 				Devices.regulate(scope.device.address, scope.device.regulation).then(function (data) {
 					console.log('regulated');
 				});
 			};
-			scope.toggle = function () {
-				Devices.toggle(scope.device.address).then(function (data) {
-					console.log('toggled');
-					scope.state.isToggling = true;
-					scope.state.desiredToggle = scope.device.state;
+			scope.isOn = function () {
+				return (scope.device.regulation > 0);
+			};
+			scope.toggleAutorun = function () {
+				if (scope.device.autorun == true) scope.device.autorun = 0;
+				else scope.device.autorun = 1;
+				Devices.setAutorun(scope.device.address, scope.device.autorun).then(function (data) {
 				});
 			}
-			scope.isOn = function () {
-				return (scope.device.state == 1);
+			scope.isAutorun = function () {
+				return (scope.device.autorun + 0) == 1;
 			}
 		}
 	}
