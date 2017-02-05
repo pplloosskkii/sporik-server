@@ -16,6 +16,7 @@ var Device = function (param) {
 		regulation_changed_at: null,
 		is_registered: false,
 		max_consumption: null,
+		phase: null,
 		alias: null,
 		description: null,
 	};
@@ -58,9 +59,10 @@ var Device = function (param) {
 		isRegulable: function () {
 			return (obj.autorun == true && obj.autorun_max > 0);
 		},
-		setRegulationMode: function (mode) {
+		setRegulationMode: function (mode, maximum) {
 			obj['autorun'] = mode;
-			DeviceDb.device.update(obj.address, { 'autorun': mode });
+			obj['autorun_max'] = maximum;
+			DeviceDb.device.update(obj.address, { 'autorun': mode, 'autorun_max': maximum });
 		}
 	}
 };

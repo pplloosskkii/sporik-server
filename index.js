@@ -37,12 +37,12 @@ app.get('/api/get/:id',function(req,res){
 });
 
 
-app.put('/api/autorun/:id/:value',function(req,res){
+app.put('/api/autorun/:id/:value/:maximum',function(req,res){
 	var ret = devices.list().get(req.params.id);
 	if (typeof ret == 'undefined') {
 		return res.status(404).json({ ok: false, reason: "404 Not Found" });
 	}
-	ret.setRegulationMode(parseInt(req.params.value));
+	ret.setRegulationMode(parseInt(req.params.value), parseInt(req.params.maximum));
 	res.json({"ok":true});
 });
 

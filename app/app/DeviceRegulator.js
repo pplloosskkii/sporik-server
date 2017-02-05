@@ -3,20 +3,22 @@ var single;
 
 
 var DeviceRegulator = function () {
-	var START_ON_COEFICIENT = 200; // WATTS before fully start device
 	var data = {};
-	var watchedPhaseValue = 0;
-	var elmerValues = [];
+	var elmerValues;
+	var deviceData;
+	var DEVICE_START_COEFICIENT;
 
-	function lowerConsumption(device, regulation, coef) {
-		var newRegulation = parseInt(regulation) - parseInt(coef);
+	function lowerConsumption(device, powerAvailable) {
+		var coef = Math.round(powerAvailable / (DEVICE_START_COEFICIENT * 2));
+		var newRegulation = parseInt(deviceData.regulation) + coef;
 		if (newRegulation > 100) return;
 		//console.log('--- reg:', regulation, 'coef:', coef, 'newreg:', newRegulation);
 		device.update({'regulation': newRegulation }, true); // force
 	}
 
-	function higherConsumption(device, regulation, coef) {
-		var newRegulation = parseInt(regulation) + parseInt(coef);
+	function higherConsumption(device, powerAvailable) {
+		var coef = Math.round(powerAvailable / (DEVICE_START_COEFICIENT * 2));
+		var newRegulation = parseInt(deviceData.regulation) + coef;
 		if (newRegulation < 0) return;
 		//console.log('+++ reg:', regulation, 'coef:', coef, 'newreg:', newRegulation);
 		device.update({'regulation': newRegulation }, true); // force publish message
@@ -24,29 +26,35 @@ var DeviceRegulator = function () {
 
 
 	function regulate(device) {
-		var deviceData = device.get();
-		var powerAvailable = Math.round(deviceData.autorun_max - watchedPhaseValue);
-		if (powerAvailable < 20 && powerAvailable > -20) return;
+		deviceData = device.get();
+
+		if (deviceData.phase < 1 || deviceData.phase > 3) {
+			return;
+		}
+
+		var	phaseValue = (elmerValues['P' + deviceData.phase + 'A+'] / 10) || 0;
+		var powerAvailable = Math.round(deviceData.autorun_max - phaseValue);
+		DEVICE_START_COEFICIENT = Math.round(deviceData.max_consumption / 100);
+
+		if (powerAvailable < (1.1 * DEVICE_START_COEFICIENT) && powerAvailable > (-1.1 * DEVICE_START_COEFICIENT)) return;
 		if (powerAvailable > 0) {
 			// we have power to add
-			higherConsumption(device, deviceData.regulation, 1);
+			higherConsumption(device, powerAvailable);
 		} else {
 			// decrease regulation
-			lowerConsumption(device, deviceData.regulation, 1);
+			lowerConsumption(device, powerAvailable);
 		}
 	}
 
 
 	return {
 		tick: function(Elmer, deviceList) {
-			var elmer = Elmer.get();
+			elmerValues = Elmer.get();
 			var devices = deviceList.list(); // devices = instanceof DictionaryJs
 			if (devices.size() == 0) {
 				//console.log('will NOT regulate: no devices');
 				return false;
 			}
-
-			watchedPhaseValue = (elmer['P3A+'] / 10) || 0;
 
 			// regulate all devices
 			// TODO by priority
