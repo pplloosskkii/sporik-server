@@ -9,8 +9,11 @@ sporikApp.directive('deviceList', ['Devices', '$timeout', function(Devices, $tim
     		Devices.list().then(function (data) {
   				scope.devices = data.data.devices;
           scope.loading = false;
-  				$timeout(fetchDevices, 5000);
-  			});
+  				$timeout(fetchDevices, 2500);
+  			}, function (err) {
+          // retry in 10s
+          $timeout(fetchDevices, 10000);
+        });
     	}
 
     	fetchDevices();

@@ -15,7 +15,6 @@ sporikApp.directive('device', ['$timeout', 'Devices', function($timeout, Devices
 
 			scope.regulate = function () {
 				Devices.regulate(scope.device.address, scope.device.regulation).then(function (data) {
-					console.log('regulated');
 				});
 			};
 			scope.isOn = function () {

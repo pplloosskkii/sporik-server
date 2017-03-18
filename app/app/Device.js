@@ -19,11 +19,13 @@ var Device = function (param) {
 		phase: null,
 		alias: null,
 		description: null,
+		is_linear:null,
 	};
 
 	if ((typeof param).toLowerCase() === 'string') {
 		// param is address
 		obj.address = address;
+		obj.autorun = 0;
 	} else if ((typeof param).toLowerCase() === 'object') {
 		// param is full object from db 
 		obj = param;
@@ -50,7 +52,7 @@ var Device = function (param) {
 			DeviceDb.device.update(obj.address, param);
 
 			if (publish && typeof param['regulation'] !== 'undefined') {
-				client.publish('sporik/regulate', '{"address": "' + obj.address + '", "value": ' + param['regulation'] + '}');
+				client.publish('sporik/regulate', '{"address":"' + obj.address + '","value":' + param['regulation'] + '}');
 			}
 		},
 		isAlive: function () {
@@ -59,10 +61,16 @@ var Device = function (param) {
 		isRegulable: function () {
 			return (obj.autorun == true && obj.autorun_max > 0);
 		},
+		isLinear: function () {
+			return (obj.is_linear == true);
+		},
 		setRegulationMode: function (mode, maximum) {
-			obj['autorun'] = mode;
-			obj['autorun_max'] = maximum;
+			obj.autorun = mode;
+			obj.autorun_max = maximum;
 			DeviceDb.device.update(obj.address, { 'autorun': mode, 'autorun_max': maximum });
+		},
+		toString: function () {
+			return "Device: " + obj.address + " (" + obj.alias + ") - " + obj.description;
 		}
 	}
 };

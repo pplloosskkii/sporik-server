@@ -21,7 +21,8 @@ console.log('initting');
 app.get('/api/list',function(req, res){
 	ret = [];
 	devices.list().forEach(function(key, device) {
-		if (device.isAlive()) {
+		//console.log(device.toString());
+		if (device.isAlive() || !device.isRegistered()) {
 			ret.push(device.get());
 		}
 	});

@@ -14,8 +14,10 @@
     <body class="container" ng-app="sporikApp" ng-controller="sporikDashboard as main">
         <header class="page-header">
             <elmer-reading></elmer-reading>
+            <elmer-owerflow-chart data="elmer"></elmer-owerflow-chart> 
             <elmer-chart data="elmer"></elmer-chart>
             <h1>Spořík v0.3</h1> 
+            <a href="/elmer/www/">Elměr</a>
         </header>
 
         <div class="row" ng-cloak id="content" device-list></div>
@@ -29,6 +31,7 @@
     <script src="./app/www/elmer/Elmer.js"></script>
     <script src="./app/www/elmer/ElmerTextBox.js"></script>
     <script src="./app/www/elmer/ElmerGraph.js"></script>
+    <script src="./app/www/elmer/ElmerOwerflowGraph.js"></script>
     <script src="./app/www/device/device.js"></script>
     <script src="./app/www/device/deviceList.js"></script>
     <script src="./app/www/device/deviceChart.js"></script>

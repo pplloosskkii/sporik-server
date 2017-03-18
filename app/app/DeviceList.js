@@ -22,9 +22,10 @@ var DeviceList = function (mqtt) {
 					if (data && data.length) {
 						var newDevice = new Device(data[0]);
 						devices.set(address, newDevice);
+						mqttRegister(address);
 						deferred.resolve(newDevice);
 					} else {
-						var newDevice = new Device(address);
+						var newDevice = new Device(address); // init default
 						devices.set(address, newDevice);
 						DeviceDb.device.add(newDevice.get(), function () {
 							mqttRegister(address);

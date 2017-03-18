@@ -34,6 +34,7 @@ client.on('connect', function () {
 client.on('message', function (topic, message) {
 	DEBUG && console.log('got message in:', topic);
 	var msg = parseMessage(message);
+	DEBUG && console.log('from:', msg.address);
 	
 	
 	if (topic == 'sporik/elmer') {
