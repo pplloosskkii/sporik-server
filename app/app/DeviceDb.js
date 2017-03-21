@@ -34,7 +34,7 @@ var DeviceDb = function () {
 
 			},
 			list: function (params, cb) {
-				var query = connection.query('SELECT * FROM devices WHERE ? ORDER BY created_at', params, function(err, result) {
+				var query = connection.query('SELECT * FROM devices WHERE ? ORDER BY phase', params, function(err, result) {
 					if (err) throw new Error(err);
 					cb && cb(result);
 				});

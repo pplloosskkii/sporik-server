@@ -7,7 +7,9 @@ sporikApp.directive('deviceList', ['Devices', '$timeout', function(Devices, $tim
     	var fetchDevices = function () {
         scope.loading = true;
     		Devices.list().then(function (data) {
-  				scope.devices = data.data.devices;
+  				scope.devices = data.data.devices.sort(function(a, b){
+            return a.phase > b.phase;
+          });
           scope.loading = false;
   				$timeout(fetchDevices, 2500);
   			}, function (err) {

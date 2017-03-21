@@ -1,5 +1,5 @@
 
-var sporikApp = angular.module('sporikApp', ['chart.js']);
+var sporikApp = angular.module('sporikApp', ['chart.js','angularModalService']);
 
 sporikApp.constant("ApiConfig", {
     "url": "http://192.168.1.246:9009/api",

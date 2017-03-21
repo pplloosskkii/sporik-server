@@ -1,4 +1,4 @@
-sporikApp.directive('device', ['$timeout', 'Devices', function($timeout, Devices) {
+sporikApp.directive('device', ['$timeout', 'Devices', 'ModalService', function($timeout, Devices, ModalService) {
 	return {
 		restrict: 'A',
 		scope: {
@@ -9,7 +9,6 @@ sporikApp.directive('device', ['$timeout', 'Devices', function($timeout, Devices
 			scope.autorun = { 
 				maximum: scope.device.autorun_max || 0,
 				enabled: false,
-				showModal: false,
 			}
 			scope.device.regulation = scope.device.regulation || 0;
 
@@ -20,12 +19,15 @@ sporikApp.directive('device', ['$timeout', 'Devices', function($timeout, Devices
 			scope.isOn = function () {
 				return (scope.device.regulation > 0);
 			};
+
 			scope.toggleAutorun = function () {
-				if (!scope.isAutorun() && (scope.autorun.enabled == false || scope.autorun.showModal)) {
-					scope.autorun.showModal = true;
-					return;
+				if (!scope.isAutorun() && scope.autorun.enabled == false) {
+					scope.showModal();
 				} 
-				toggle();
+
+				if (scope.isAutorun() || scope.autorun.enabled) {
+					toggle();
+				} 
 			}
 
 			var toggle = function () {
@@ -48,6 +50,28 @@ sporikApp.directive('device', ['$timeout', 'Devices', function($timeout, Devices
 			scope.isAutorun = function () {
 				return (scope.device.autorun + 0) == 1;
 			}
+
+			scope.showModal = function() {
+
+				ModalService.showModal({
+					templateUrl: "./app/www/device/regulationModal.html",
+					controller: ['$scope', 'close', function (scope, close) {
+						scope.maximum = 100;
+						scope.close = function (param) { close(param); }	
+					}],
+					controllerAs: 'autorun'
+				}).then(function(modal) {
+					modal.element.modal();
+					modal.close.then(function(result) {
+						console.log(result)
+						if (result >= 0) {
+							scope.autorun.maximum = result;
+							toggle();
+						}
+					});
+				});
+
+			};
 		}
 	}
 }]);

@@ -2,12 +2,26 @@
     Žádné zařízení není připojeno
     <button class="btn btn-outline btn-warning pull-right" ng-click="main.load()">Obnovit</button>
 </div>
-<div class="container">
-<div ng-repeat="item in devices track by item.address" class="col-md-6 clearfix" ng-cloak>
-	<div class="panel panel-default">
-	    <div class="info" device="item">
+<div class="device-container container">
+	<div class="col-md-12 clearfix">
+		<i class="glyphicon glyphicon-eye-open" ng-click="showElmers = !showElmers" ng-show="!showElmers"></i><br>
+	</div>
+	<div ng-if="showElmers">
+		<div class="col-md-4 clearfix">
+			<div class="panel"><elmer-chart data="elmer" phase="1" colors="['#cc0000']" height="100"></elmer-chart></div>
+		</div>
+		<div class="col-md-4 clearfix">
+			<div class="panel"><elmer-chart data="elmer" phase="2" colors="['#00cc00']" height="100"></elmer-chart></div>
+		</div>
+		<div class="col-md-4 clearfix">
+			<div class="panel"><elmer-chart data="elmer" phase="3" colors="['#00cccc']" height="100"></elmer-chart></div>
+		</div>
+	</div>
+	<div ng-repeat="item in devices track by item.address" class="col-md-4 clearfix" ng-cloak>
+		<div class="panel panel-default">
+		    <div class="info" device="item">
+		    </div>
 	    </div>
-    </div>
-    <br style="clear:both">
-</div>
+	    <br style="clear:both">
+	</div>
 </div>

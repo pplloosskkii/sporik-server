@@ -15,17 +15,20 @@
         <header class="page-header">
             <elmer-reading></elmer-reading>
             <elmer-owerflow-chart data="elmer"></elmer-owerflow-chart> 
-            <elmer-chart data="elmer"></elmer-chart>
-            <h1>Spořík v0.3</h1> 
-            <a href="/elmer/www/">Elměr</a>
+            <elmer-chart data="elmer" width="400" height="90" colors="['#cc0000', '#00cc00', '#00cccc']"></elmer-chart>
+            <h1><span class="glyphicon glyphicon-equalizer"></span> Spořík v0.3b</h1> 
+            <a href="/elmer/www/" class="label label-primary">Elměr</a>
         </header>
 
         <div class="row" ng-cloak id="content" device-list></div>
     </body>
 
+    <script src="./node_modules/jquery/dist/jquery.min.js"></script>
     <script src="./node_modules/angular/angular.min.js"></script>
+    <script src="./node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
     <script src="./node_modules/chart.js/dist/Chart.min.js"></script>
     <script src="./node_modules/angular-chart.js/dist/angular-chart.min.js"></script>
+    <script src="./node_modules/angular-modal-service/dst/angular-modal-service.min.js"></script>
     <script src="./app/www/main.js"></script>
     <script src="./app/www/Devices.js"></script>
     <script src="./app/www/elmer/Elmer.js"></script>

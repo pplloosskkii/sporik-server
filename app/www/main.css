@@ -10,6 +10,12 @@
     margin-left:40px;
 }
 
+h1 {
+	font-size:xx-large;
+}
+
+.bigger { font-size:13px; }
+
 .p1 {
 	background-color:#c00 !important;
 }
@@ -31,6 +37,13 @@
 }
 
 .device-container {}
+
+.device input[type="checkbox"] {
+	width:18px;
+	height:18px;
+	margin-right: 5px;
+	margin-left: 5px;
+}
 
 .device .range-container {
 	display:flex;

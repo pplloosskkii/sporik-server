@@ -1,39 +1,18 @@
 <div class="device">
-	<h4 title="Název a popis zařízení"><label>{{ device.alias }}</label> <small>({{ device.description }})</small></h4>
+
+	<div class="pull-right label bigger" ng-class="{ 'p1': device.phase == 1, 'p2': device.phase == 2, 'p3': device.phase == 3 }">
+	{{ device.measurement_recount }}&nbsp;W
+	</div>
+
+	<h4 title="{{ device.description }}">
+		<label><input type="checkbox" ng-checked="isAutorun()" ng-model="device.autorun.enabled" ng-click="toggleAutorun()"/>
+		{{ device.alias }}</label>
+	</h4>
+
+	<device-chart data="device.measurement_recount"></device-chart>
 	<div class="range-container">
 		<span class="font-smaller left">0&nbsp;W</span>
 		<input type="range" min="0" max="100" ng-model="device.regulation" ng-change="regulate()" ng-model-options="{debounce:200}" ng-disabled="isAutorun()" title="{{ device.regulation }}%"/>
 		<span class="font-smaller right" title="Maximální výkon zařízení">{{ device.max_consumption }}&nbsp;W</span>
 	</div>
-	<device-chart data="device.measurement_recount"></device-chart>
-
-	<div class="clearfix">
-		<label title="Aktuální vypočtená spotřeba">{{ device.measurement_recount }}&nbsp;W</label>
-		
-		<div class="pull-right">
-		<label style="margin-right: 10px;">
-			<input type="checkbox" ng-checked="isAutorun()" ng-model="device.autorun.enabled" ng-click="toggleAutorun()"/> Automaticky
-			<span ng-show="device.autorun_max > 0 && isAutorun()" title="Zařízení bude regulováno tak, aby na jeho fázi na elektroměru byla spotřeba {{device.autorun_max}} W" class="label label-default">{{device.autorun_max}}&nbsp;W</span>
-		</label>
-
-		<button ng-if="isOn()" ng-click="device.regulation = 0; regulate();" class="btn btn-sm btn-success" ng-disabled="isAutorun()">Vypnout</button>
-		<button ng-if="!isOn()" ng-click="device.regulation = 100; regulate();" class="btn btn-sm btn-primary" ng-disabled="isAutorun()">Zapnout</button>
-		</div>
-	</div>
-</div>
-<div class="modal-dialog" role="document" ng-if="autorun.showModal == true" style="position:absolute; z-index:1000; top:50%; left:33%">
-	<form class="modal-content" ng-submit="setRegulationMax()">
-		<div class="modal-header">
-			<h4 class="modal-title">Zadejte regulační maximum</h4>
-		</div>
-		<div class="modal-body form-group-lg">
-			<p>Povoleny jsou kladné i záporné hodnoty. Kladná znamená spínání při nastavené spotřebě, záporná při výrobě. Hodnotu zadávejte ve Wattech.</p>
-			<input type="number" ng-model="autorun.maximum" class="form-control">
-		</div>
-		<div class="modal-footer">
-
-			<button type="button" class="btn btn-link pull-left" ng-click="autorun.showModal = false; ">Zrušit</button>
-			<button type="submit" class="btn btn-primary">Nastavit</button>
-		</div>
-	</form>
 </div>

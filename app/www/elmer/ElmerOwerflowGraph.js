@@ -26,7 +26,6 @@ sporikApp.directive('elmerOwerflowChart', [function() {
 
       scope.$watch('data', function (newVal, oldVal) {
         if (typeof newVal != 'undefined' && typeof newVal['ok'] != 'undefined' && newVal['ok'] == true) {
-          console.log(newVal.overflow);
           scope.all[0].push(newVal.overflow[0]);
           scope.all[1].push(newVal.overflow[1]);
           scope.all[2].push(newVal.overflow[2]);
