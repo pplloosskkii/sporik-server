@@ -1,18 +1,35 @@
-<div class="device">
+<div class="panel panel-default panel-with-padding">
+	<div class="device">
+		<div class="device-header">
+	 		<div class="pull-left label bigger" ng-class="{ 'label-success': device.autorun, 'label-info': !device.autorun }">
+				{{ device.measurement_recount }}&nbsp;W
+			</div>
 
-	<div class="pull-right label bigger" ng-class="{ 'p1': device.phase == 1, 'p2': device.phase == 2, 'p3': device.phase == 3 }">
-	{{ device.measurement_recount }}&nbsp;W
+			<div class="pull-right">
+				<a class="label label-default bigger" ng-click="openSettings()">...</a>
+			</div>
+
+			<h4 title="{{ device.description }}">
+				<label>{{ device.alias }}</label>
+			</h4>
+		</div>
+
+		<device-chart data="device.measurement_recount"></device-chart>
+		<div class="range-container" ng-if="device.is_linear === 1">
+			<span class="font-smaller left">0&nbsp;W</span>
+			<input type="range" min="0" max="100" 
+				title="{{ device.regulation }}%"
+				ng-model="device.regulation" ng-change="regulate()" ng-model-options="{debounce:200}" ng-disabled="isAutorun()"
+				/>
+			<span class="font-smaller right" title="Maximální výkon zařízení">{{ device.max_consumption }}&nbsp;W</span>
+		</div>
+
+		<div ng-if="!device.is_linear" style="margin:0 auto;">
+			<div class="switch" ng-class="{ 'on': device.regulation == 0, 'off': device.regulation == 100, 'disabled': loading.toggleOnOff }" ng-click="toggleOnOff()">
+				<div class="toggle"></div>
+				<span class="on">ZAPNUTO</span>
+				<span class="off">VYPNUTO</span>
+			</div>
 	</div>
-
-	<h4 title="{{ device.description }}">
-		<label><input type="checkbox" ng-checked="isAutorun()" ng-model="device.autorun.enabled" ng-click="toggleAutorun()"/>
-		{{ device.alias }}</label>
-	</h4>
-
-	<device-chart data="device.measurement_recount"></device-chart>
-	<div class="range-container">
-		<span class="font-smaller left">0&nbsp;W</span>
-		<input type="range" min="0" max="100" ng-model="device.regulation" ng-change="regulate()" ng-model-options="{debounce:200}" ng-disabled="isAutorun()" title="{{ device.regulation }}%"/>
-		<span class="font-smaller right" title="Maximální výkon zařízení">{{ device.max_consumption }}&nbsp;W</span>
 	</div>
 </div>

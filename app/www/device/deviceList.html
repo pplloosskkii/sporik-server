@@ -3,25 +3,11 @@
     <button class="btn btn-outline btn-warning pull-right" ng-click="main.load()">Obnovit</button>
 </div>
 <div class="device-container container">
-	<div class="col-md-12 clearfix">
-		<i class="glyphicon glyphicon-eye-open" ng-click="showElmers = !showElmers" ng-show="!showElmers"></i><br>
-	</div>
-	<div ng-if="showElmers">
-		<div class="col-md-4 clearfix">
-			<div class="panel"><elmer-chart data="elmer" phase="1" colors="['#cc0000']" height="100"></elmer-chart></div>
+	<div class="phases-container">
+		<div ng-repeat="phase in [1,2,3]" class="phase col-md-4 clearfix" ng-class="'phase' + phase">
+			<h3 class="c{{phase}}">
+			L{{ phase }}</h3>
+			<div ng-repeat="item in devices track by item.address" ng-if="item.phase == phase" device="item"></div>
 		</div>
-		<div class="col-md-4 clearfix">
-			<div class="panel"><elmer-chart data="elmer" phase="2" colors="['#00cc00']" height="100"></elmer-chart></div>
-		</div>
-		<div class="col-md-4 clearfix">
-			<div class="panel"><elmer-chart data="elmer" phase="3" colors="['#00cccc']" height="100"></elmer-chart></div>
-		</div>
-	</div>
-	<div ng-repeat="item in devices track by item.address" class="col-md-4 clearfix" ng-cloak>
-		<div class="panel panel-default">
-		    <div class="info" device="item">
-		    </div>
-	    </div>
-	    <br style="clear:both">
 	</div>
 </div>

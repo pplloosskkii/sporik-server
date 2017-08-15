@@ -2,10 +2,16 @@
 	<div class="modal-dialog" role="document">
 		<form class="modal-content" ng-submit="setRegulationMax()">
 			<div class="modal-header">
-				<h4 class="modal-title">Zadejte regulační maximum</h4>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h4 class="modal-title">Hodnota automatické regulace</h4>
 			</div>
 			<div class="modal-body form-group-lg">
-				<p>Povoleny jsou kladné i záporné hodnoty. Kladná znamená spínání při nastavené spotřebě, záporná při výrobě. Hodnotu zadávejte ve Wattech.</p>
+				<p>Zvolte regulační hodnotu, která bude tímto zařízením udržována na měřeném bodě. Pro většinu aplikací stačí zvolit vyrovnávání na nulu.</p>
+				<div class="text-center">
+					<button type="submit" class="btn btn-success text col-md-12" ng-click="close(0)" data-dismiss="modal">Vyrovnávat na nulu</button>
+				</div>
+				<p>&nbsp;</p>
+				<p class="">Nebo zadejte hodnotu ve Wattech</p>
 				<input type="number" ng-model="maximum" class="form-control">
 			</div>
 			<div class="modal-footer">

@@ -1,9 +1,24 @@
 
-var sporikApp = angular.module('sporikApp', ['chart.js','angularModalService']);
+var sporikApp = angular.module('sporikApp', ['chart.js','angularModalService', 'objValueFilter']);
 
-sporikApp.constant("ApiConfig", {
-    "url": "http://192.168.1.246:9009/api",
+angular.module('objValueFilter',[])
+.filter('objVal', function() {
+  return function(input, search) {
+    if (!input) return input;
+    if (!search) return input;
+    var result = {};
+    angular.forEach(input, function(value, key) {
+    	angular.forEach(search, function (searchValue, searchKey) {
+      		if (value.hasOwnProperty(searchKey) && value[searchKey] === searchValue) {
+       			//result[key] = value;
+       			result[key] = value; //.push(value);
+      		}
+      	});
+    });
+    return result;
+  }
 });
+
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////

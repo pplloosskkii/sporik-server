@@ -38,10 +38,20 @@ var Device = function (param) {
 			}
 		},
 		get: function() {
-			obj.measurement_recount = Math.max(0, (obj.max_consumption / 100) * obj.regulation);
-			return obj;
+			var newObj = {};
+			for (var i in obj) {
+				newObj[i] = obj[i];
+			}
+			newObj.measurement_recount = Math.max(0, (obj.max_consumption / 100) * obj.regulation);
+			return newObj;
 		},
-		update: function (param, publish) {
+		update: function (newData) {
+			for (var i in {'autorun':0, 'autorun_max':0, 'phase':0, 'alias':0, 'description':0, 'is_linear':0, 'max_consumption':0}) {
+				obj[i] = newData[i];
+			}
+			DeviceDb.device.update(obj.address, obj);
+		},
+		updateSingle: function (param, publish) {
 			var publish = publish || false;
 			var timestamp = new Date().valueOf();
 			for (var i in param) {
@@ -59,7 +69,7 @@ var Device = function (param) {
 			return (new Date().valueOf()) - obj.measurement_changed_at < 30000; // older than 30s are dead
 		},
 		isRegulable: function () {
-			return (obj.autorun == true && obj.autorun_max > 0);
+			return (obj.autorun == true && obj.autorun_max >= 0);
 		},
 		isLinear: function () {
 			return (obj.is_linear == true);

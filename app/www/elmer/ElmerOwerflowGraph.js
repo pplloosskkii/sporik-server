@@ -26,17 +26,17 @@ sporikApp.directive('elmerOwerflowChart', [function() {
 
       scope.$watch('data', function (newVal, oldVal) {
         if (typeof newVal != 'undefined' && typeof newVal['ok'] != 'undefined' && newVal['ok'] == true) {
-          scope.all[0].push(newVal.overflow[0]);
-          scope.all[1].push(newVal.overflow[1]);
-          scope.all[2].push(newVal.overflow[2]);
+          scope.all[0].unshift(newVal.overflow[0] * 100);
+          scope.all[1].unshift(newVal.overflow[1] * 100);
+          scope.all[2].unshift(newVal.overflow[2] * 100);
           scope.labels.push('');
         }
 
         if (scope.all[0].length > 25) {
-          scope.all[0].shift();
-          scope.all[1].shift();
-          scope.all[2].shift();
-          scope.labels.shift();
+          scope.all[0].pop();
+          scope.all[1].pop();
+          scope.all[2].pop();
+          scope.labels.pop();
         }
       });
     }

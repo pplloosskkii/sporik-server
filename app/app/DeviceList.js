@@ -5,9 +5,12 @@ var DeviceDb = require('./DeviceDb')();
 var mqtt = require('./MqttClient');
 var single;
 
+var DEBUG = false;
+
 var DeviceList = function (mqtt) {
 	var devices = new Dictionary();
 	var mqttRegister = function (address) {
+		DEBUG && console.log("MQTT REGISTER", address);
 		mqtt.publish('sporik/register', '{"address": "' + address + '"}');
 	}
 
@@ -19,6 +22,7 @@ var DeviceList = function (mqtt) {
 			var deferred = q.defer();
 			if (!devices.has(address) || forcePublish === true) {
 				DeviceDb.device.fetch(address, function (data) {
+					//if (address == 'sporik6') console.log('RESULT FROM DB:',data);
 					if (data && data.length) {
 						var newDevice = new Device(data[0]);
 						devices.set(address, newDevice);
@@ -32,11 +36,18 @@ var DeviceList = function (mqtt) {
 							deferred.resolve(newDevice);
 						})
 					}
+
+					//if (address == 'sporik6') console.log('DEVICES:',devices.get('sporik6'));
 				})
 			} else {
 				deferred.resolve(devices.get(address));
 			}
 			return deferred.promise;
+		},
+		unregister: function (address) {
+			if (devices.has(address)) {
+				devices.remove(address);
+			}
 		},
 		reconnectAll: function () {
 			DeviceDb.device.list({ 'devices.is_registered': 1 }, function (data) {

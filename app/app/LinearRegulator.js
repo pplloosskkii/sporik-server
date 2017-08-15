@@ -18,16 +18,17 @@ var LinearRegulator = function () {
 		if (newRegulation > 100 || newRegulation < 0) return lowerConsumption(device, powerAvailable / 2)
 		lastRegulationDirection = 'down';
 		DEBUG && console.log('--- reg:', deviceData.regulation, 'coef:', coef, 'newreg:', newRegulation);
-		device.update({'regulation': newRegulation }, true); // force
+		device.updateSingle({'regulation': newRegulation }, true); // force
 	}
 
 	function higherConsumption(device, powerAvailable) {
 		var coef = Math.round(powerAvailable / (DEVICE_START_COEFICIENT * 2));
 		var newRegulation = parseInt(deviceData.regulation) + coef;
 		if (newRegulation > 100 || newRegulation < 0)  return higherConsumption(device, powerAvailable / 2)
+		//if (newRegulation >= 100) newRegulation = 100;
 		lastRegulationDirection = 'up';
 		DEBUG && console.log('+++ reg:', deviceData.regulation, 'coef:', coef, 'newreg:', newRegulation);
-		device.update({'regulation': newRegulation }, true); // force publish message
+		device.updateSingle({'regulation': newRegulation }, true); // force publish message
 	}
 
 
@@ -41,10 +42,12 @@ var LinearRegulator = function () {
 		var	phaseValue = (elmerValues['P' + deviceData.phase + 'A+'] / 10) || 0;
 
 		var powerAvailable = Math.round(deviceData.autorun_max - phaseValue);
-		DEBUG && console.log('Power avail:', powerAvailable, 'overflow:', elmerValues['overflow']);
+		var overflow = elmerValues['overflow'][deviceData.phase - 1];
 
-		if (elmerValues['overflow'][deviceData.phase - 1] > 0 && powerAvailable < 0) {
-			powerAvailable = -1*powerAvailable;
+		deviceData.phase == 1 && DEBUG && console.log('Power avail:', powerAvailable, 'overflow:', elmerValues['overflow'], 'reg:', deviceData.regulation);
+
+		if (overflow > 0 && powerAvailable < 0) {
+			powerAvailable = Math.abs(powerAvailable);
 			DEBUG && console.log('Inverting power avail:', powerAvailable);
 		}
 

@@ -1,8 +1,8 @@
-sporikApp.factory('Devices', ['$http', '$q', '$timeout', 'ApiConfig', function ($http, $q, $timeout, ApiConfig) {
+sporikApp.factory('Devices', ['$http', '$q', '$timeout', 'AppConfig', function ($http, $q, $timeout, AppConfig) {
 	return {
 		list: function () {
 			var deferred = $q.defer();
-			$http.get(ApiConfig.url + '/list').then(function(data, status, headers, config) {
+			$http.get(AppConfig.apiUrl + '/list').then(function(data, status, headers, config) {
 				deferred.resolve(data);
 			}, deferred.reject);
 			return deferred.promise;
@@ -10,7 +10,15 @@ sporikApp.factory('Devices', ['$http', '$q', '$timeout', 'ApiConfig', function (
 
 		get: function (address) {
 			var deferred = $q.defer();
-			$http.get(ApiConfig.url + '/get/' + address).then(function(data, status, headers, config) {
+			$http.get(AppConfig.apiUrl + '/get/' + address).then(function(data, status, headers, config) {
+				deferred.resolve(data);
+			}, deferred.reject);
+			return deferred.promise;
+		},
+
+		save: function (device) {
+			var deferred = $q.defer();
+			$http.post(AppConfig.apiUrl + '/update/' + device.address, device).then(function(data, status, headers, config) {
 				deferred.resolve(data);
 			}, deferred.reject);
 			return deferred.promise;
@@ -18,7 +26,7 @@ sporikApp.factory('Devices', ['$http', '$q', '$timeout', 'ApiConfig', function (
 
 		setAutorun: function (address, autorun_value, autorun_maximum) {
 			var deferred = $q.defer();
-			$http.put(ApiConfig.url + '/autorun/' + address + "/" + (autorun_value + 0) + "/" + autorun_maximum).then(function(data, status, headers, config) {
+			$http.put(AppConfig.apiUrl + '/autorun/' + address + "/" + (autorun_value + 0) + "/" + autorun_maximum).then(function(data, status, headers, config) {
 				deferred.resolve(data);
 			}, deferred.reject);
 			return deferred.promise;
@@ -26,7 +34,7 @@ sporikApp.factory('Devices', ['$http', '$q', '$timeout', 'ApiConfig', function (
 
 		regulate: function (address, amount) {
 			var deferred = $q.defer();
-			$http.put(ApiConfig.url + '/regulate/' + address + '/' + amount).then(function(data, status, headers, config) {
+			$http.put(AppConfig.apiUrl + '/regulate/' + address + '/' + amount).then(function(data, status, headers, config) {
 				deferred.resolve(data);
 			}, deferred.reject);
 			return deferred.promise;

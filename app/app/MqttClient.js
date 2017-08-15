@@ -36,6 +36,9 @@ client.on('message', function (topic, message) {
 	var msg = parseMessage(message);
 	DEBUG && console.log('from:', msg.address);
 	
+	if (DEBUG && msg.address == 'sporik6') {
+		console.log(msg);
+	}
 	
 	if (topic == 'sporik/elmer') {
 		Elmer.set(msg);
@@ -44,18 +47,19 @@ client.on('message', function (topic, message) {
 
 	if (topic == 'sporik/connect') {
 		devices.register(msg.address, true).then(function (device) {
+			console.log(msg.address, "is connected");
 		});
 	}
 
 	if (topic == 'sporik/triac-value') {
 		devices.register(msg.address).then(function (device) {
-			device.update({'regulation': msg.value });
+			device.updateSingle({'regulation': msg.value });
 		});
 	}
 
 	if (topic == 'sporik/measurement') {
 		devices.register(msg.address).then(function (device) {
-			device.update({ 'regulation': msg.r, 'measurement': msg.value });
+			device.updateSingle({ 'regulation': msg.r, 'measurement': msg.value });
 		});
 	}
 })

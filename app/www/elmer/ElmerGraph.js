@@ -39,11 +39,11 @@ sporikApp.directive('elmerChart', [function() {
         if (typeof newVal != 'undefined' && typeof newVal.ok != 'undefined' && newVal.ok == true) {
 
           if (typeof attrs.phase != 'undefined') {
-            scope.all.push(newVal['p' + scope.phase]);
+            scope.all.unshift(newVal['p' + scope.phase]);
           } else {
-            scope.all[0].push(newVal.p1);
-            scope.all[1].push(newVal.p2);
-            scope.all[2].push(newVal.p3);
+            scope.all[0].unshift(newVal.p1);
+            scope.all[1].unshift(newVal.p2);
+            scope.all[2].unshift(newVal.p3);
           }
 
           scope.labels.push('');
@@ -52,11 +52,11 @@ sporikApp.directive('elmerChart', [function() {
         if (scope.all.length > 50 || (typeof scope.all[1] != 'undefined' && scope.all[1].length > 50)) {
 
           if (typeof attrs.phase != 'undefined') {
-            scope.all.shift();
+            scope.all.pop();
           } else {
-            scope.all[0].shift();
-            scope.all[1].shift();
-            scope.all[2].shift();
+            scope.all[0].pop();
+            scope.all[1].pop();
+            scope.all[2].pop();
           }
           scope.labels.shift();
         }

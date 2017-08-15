@@ -1,4 +1,4 @@
-sporikApp.directive('deviceList', ['Devices', '$timeout', function(Devices, $timeout) {
+sporikApp.directive('deviceList', ['Devices', '$timeout', '$rootScope', function(Devices, $timeout, $rootScope) {
   return {
     restrict: 'A',
     templateUrl: './app/www/device/deviceList.html',
@@ -19,6 +19,11 @@ sporikApp.directive('deviceList', ['Devices', '$timeout', function(Devices, $tim
     	}
 
     	fetchDevices();
+
+        $rootScope.$on('reloadDevices', function () {
+            console.log('received')
+            fetchDevices();
+        })
 	},
 
   }

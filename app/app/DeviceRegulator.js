@@ -1,5 +1,6 @@
 var LinearRegulator = require('./LinearRegulator')();
 var RelayRegulator = require('./RelayRegulator')();
+var ZeroRegulator = require('./ZeroRegulator')();
 
 var single;
 var DEBUG = false;
@@ -15,13 +16,15 @@ var DeviceRegulator = function () {
 				//console.log('will NOT regulate: no devices');
 				return false;
 			}
-
 			// regulate all devices
 			// TODO by priority
 			devices.forEach(function(key, device) {
 				if (device.isRegulable()) {
 					if (device.isLinear()) {
-						regulator = LinearRegulator;
+						if (device.get().autorun_max == 0)
+							regulator = ZeroRegulator;
+						else
+							regulator = LinearRegulator;
 					} else {
 						regulator = RelayRegulator;
 					}

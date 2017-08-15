@@ -21,8 +21,13 @@ console.log('initting');
 app.get('/api/list',function(req, res){
 	ret = [];
 	devices.list().forEach(function(key, device) {
-		//console.log(device.toString());
-		if (device.isAlive() || !device.isRegistered()) {
+		if (typeof device == 'undefined' || typeof device.isAlive != 'function' || !device.isAlive()) {
+			// deregister device
+			DEBUG && console.log("unregistering:", key);
+			devices.unregister(key);
+			return;
+		}
+		if (device.isAlive()) {
 			ret.push(device.get());
 		}
 	});
@@ -44,6 +49,17 @@ app.put('/api/autorun/:id/:value/:maximum',function(req,res){
 		return res.status(404).json({ ok: false, reason: "404 Not Found" });
 	}
 	ret.setRegulationMode(parseInt(req.params.value), parseInt(req.params.maximum));
+	res.json({"ok":true});
+});
+
+app.post('/api/update/:id',function(req,res){
+	var data = req.body;
+	
+	var device = devices.list().get(req.params.id);
+	if (typeof device == 'undefined') {
+		return res.status(404).json({ ok: false, reason: "404 Not Found" });
+	}
+	device.update(data);
 	res.json({"ok":true});
 });
 

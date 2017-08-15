@@ -1,0 +1,67 @@
+<div class="modal" ng-init="options = { showAdvanced: false, showAutorunOptions: device.autorun }">
+	<div class="modal-dialog" role="document">
+		<form class="modal-content" ng-submit="">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h4 class="modal-title">Nastavení zařízení</h4>
+			</div>
+			<div class="modal-body form-group-lg">
+				<div class="form-group">
+					<label>Adresa zařízení</label>
+					<input type="text" ng-model="device.address" class="form-control disabled" disabled="disabled">
+				</div>
+				<div class="form-group">
+					<label>Název zařízení</label>
+					<input type="text" ng-model="device.alias" class="form-control" placeholder="např. Bojler">
+				</div>
+				<div class="form-group">
+					<label>Krátký popis</label>
+					<input type="text" ng-model="device.description" class="form-control" placeholder="např. Bojler v technické místnosti, 200l">
+				</div>
+				<div class="form-group">
+					<div>
+	
+	 				</div>
+				</div>
+				<div class="panel panel-default">
+					<div class="panel-heading">Režim funkce zařízení</div>
+					<div class="panel-body">
+						<div class="form-group">
+							<label class="radio-inline"><input type="radio" ng-model="device.autorun" ng-value="0">Ručně</label>
+							<label class="radio-inline"><input type="radio" ng-model="device.autorun" ng-value="1">Automaticky</label>
+						</div>
+						<div class="form-group" ng-if="device.autorun">
+							<p>Zadejte hodnotu regulace ve Wattech. Na tuto hodnotu bude regulována celková spotřeba na měřícím bodě.</p>
+							<input type="number" ng-model="device.autorun_max" class="form-control">
+						</div>
+					</div>
+				</div>
+				<div class="panel panel-danger bg-warning">
+					<div class="panel-heading">
+						<span class="glyphicon glyphicon-chevron-down" ng-if="!options.showAdvanced"></span>
+						<span class="glyphicon glyphicon-chevron-up" ng-if="options.showAdvanced"></span>
+						<a ng-click="options.showAdvanced=!options.showAdvanced" href="" class="text-danger">Pokročilé nastavení</a></div>
+					<div class="panel-body" ng-show="options.showAdvanced">
+						<p class="text-danger">Pozor! Změna těchto nastavení může způsobit nesprávnou funkčnost zařízení. Měli byste vědět, co děláte.</p>
+						<div class="form-group">
+							<label>Fáze</label>
+							<div>
+								<div class="radio-inline"><input type="radio" ng-model="device.phase" ng-value="1">L1</div>
+								<div class="radio-inline"><input type="radio" ng-model="device.phase" ng-value="2">L2</div>
+								<div class="radio-inline"><input type="radio" ng-model="device.phase" ng-value="3">L3</div>
+							</div>
+						</div>
+						<div class="form-group">
+							<label>Spínaný výkon (W)</label>
+							<input type="number" ng-model="device.max_consumption" class="form-control">
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-link pull-left" ng-click="close(false)" data-dismiss="modal">Zrušit</button>
+				<button type="submit" class="btn btn-primary" ng-click="close(device)" data-dismiss="modal">Uložit</button>
+			</div>
+		</form>
+	</div>
+</div>
