@@ -2,15 +2,17 @@ sporikApp.directive('elmerReading', ['Elmer', '$timeout', function(Elmer, $timeo
   return {
     restrict: 'E',
     replace:true,
-    template: 	'<div class="pull-right" ng-if="hasElmer()"> \
-    				<div class="elmer box"> \
+    scope: {
+    	'data': '='
+    },
+    template: 	'<div ng-if="hasElmer()" style="display:inline-block;"> \
+    				<div class="elmer"> \
 	    				<label class="label label-default p1"> \
 	    					L1: {{ elmer.p1 }}&nbsp;W</label> \
-	    				<br><label class="label label-default p2"> \
+	    				<label class="label label-default p2"> \
 							L2: {{ elmer.p2 }}&nbsp;W</label> \
-						<br><label class="label label-default p3"> \
+						<label class="label label-default p3"> \
 							L3: {{ elmer.p3 }}&nbsp;W</label> \
-						<br> \
 					</div> \
 				</div>',
     link: function(scope, element, attrs) {
@@ -22,18 +24,12 @@ sporikApp.directive('elmerReading', ['Elmer', '$timeout', function(Elmer, $timeo
 			overflow: [0,0,0],
 			ok: false,
 		}
-
+/*
     	scope.loadElmer = function (callback) {
     		scope.loading = true;
 
-			Elmer.get().then(function (data) {
+			//Elmer.get().then(function (data) {
 
-				var o1 = data.data['overflow'][0] || 0;
-				var o2 = data.data['overflow'][1] || 0;
-				var o3 = data.data['overflow'][2] || 0;
-				var p1 = (o1 > 0 ? '+' : '-') + "" + (data.data['P1A+'] / 10);
-				var p2 = (o2 > 0 ? '+' : '-') + "" + (data.data['P2A+'] / 10);
-				var p3 = (o3 > 0 ? '+' : '-') + "" + (data.data['P3A+'] / 10);
 
 				scope.elmer = {
 					p1: p1,
@@ -60,7 +56,7 @@ sporikApp.directive('elmerReading', ['Elmer', '$timeout', function(Elmer, $timeo
 
 		scope.loadElmer(function () { 
 			scope.loading = false;
-		});
+		});*/
   	}
   }
 }]);

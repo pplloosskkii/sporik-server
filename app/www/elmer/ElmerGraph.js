@@ -8,14 +8,18 @@ sporikApp.directive('elmerChart', [function() {
       width: '@',
       height: '@',
       colors: '=',
+      columns: '@',
     },
-    template:   '<div class="box pull-right chart-elmer">\
+    template:   '<div class="chart-elmer">\
                   <canvas id="line" class="chart chart-line" chart-data="all" \
                      chart-colors="colors" chart-options="options" chart-labels="labels" width="{{ width }}" height="{{ height }}">\
                   </canvas> \
                 </div>',
 
     link: function(scope, element, attrs) {
+
+      var maxCols = attrs.columns || 50;
+
       scope.all = [[], [], []];
       scope.labels = [];
       scope.options = {
@@ -37,7 +41,6 @@ sporikApp.directive('elmerChart', [function() {
 
       scope.$watch('data', function (newVal, oldVal) {
         if (typeof newVal != 'undefined' && typeof newVal.ok != 'undefined' && newVal.ok == true) {
-
           if (typeof attrs.phase != 'undefined') {
             scope.all.unshift(newVal['p' + scope.phase]);
           } else {
@@ -49,7 +52,7 @@ sporikApp.directive('elmerChart', [function() {
           scope.labels.push('');
         }
 
-        if (scope.all.length > 50 || (typeof scope.all[1] != 'undefined' && scope.all[1].length > 50)) {
+        if (scope.all.length > maxCols || (typeof scope.all[1] != 'undefined' && scope.all[1].length > maxCols)) {
 
           if (typeof attrs.phase != 'undefined') {
             scope.all.pop();

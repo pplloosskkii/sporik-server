@@ -7,21 +7,28 @@
         <meta charset="utf-8" />
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-        <title>Spořík v0.3</title>
+        <title>Spořík</title>
         
         <link rel="stylesheet" media="all" href="./node_modules/bootstrap/dist/css/bootstrap.min.css" type="text/css" />
         <link rel="stylesheet" media="all" href="./app/www/main.css" type="text/css" />
     </head>
     <body class="container" ng-app="sporikApp" ng-controller="sporikDashboard as main">
-        <header class="page-header">
-            <elmer-reading></elmer-reading>
+        <sporik-navigation></sporik-navigation>
+        <div class="col-md-12 margin-top-medium margin-bottom-medium" ng-show="main.showElmerGraph">
+            <div class="text-center" ng-show="!main.elmer.ok"><span class="glyphicon glyphicon-refresh spinning"></span> Načítám graf</div>
+            <elmer-chart data="main.elmer" width="1100" height="120" columns="180" colors="['#cc0000', '#00cc00', '#00cccc']"></elmer-chart>
+        </div>
+<!--         <header class="page-header">
             <elmer-owerflow-chart data="elmer"></elmer-owerflow-chart> 
-            <elmer-chart data="elmer" width="400" height="90" colors="['#cc0000', '#00cc00', '#00cccc']"></elmer-chart>
+
             <h1><span class="glyphicon glyphicon-equalizer"></span> Spořík v0.3b</h1> 
             <a href="/elmer/www/" class="label label-primary">Elměr</a>
-        </header>
+        </header> -->
 
         <div class="row" ng-cloak id="content" device-list></div>
+        <div class="col-md-12 text-center">
+            <!-- <elmer-reading></elmer-reading> -->
+        </div>
     </body>
 
     <script src="./node_modules/jquery/dist/jquery.min.js"></script>
@@ -37,6 +44,7 @@
     <script src="./app/www/elmer/ElmerTextBox.js"></script>
     <script src="./app/www/elmer/ElmerGraph.js"></script>
     <script src="./app/www/elmer/ElmerOwerflowGraph.js"></script>
+    <script src="./app/www/navigation/navigation.js"></script>
     <script src="./app/www/device/device.js"></script>
     <script src="./app/www/device/deviceList.js"></script>
     <script src="./app/www/device/deviceChart.js"></script>

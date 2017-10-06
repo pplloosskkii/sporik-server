@@ -51,9 +51,6 @@ h1 {
 	padding:10px;
 }
 
-.chart-elmer {
-	margin-right: 20px;
-}
 
 .device-container {}
 
@@ -71,7 +68,7 @@ h1 {
 .device .range-container {
 	display:flex;
 	margin-top:5px;
-	margin-bottom:20px;
+	margin-bottom:0px;
 	margin-left:10px;
 }
 .device .font-smaller { font-size:small; }
@@ -98,7 +95,9 @@ h1 {
 	margin-right:10px;
 }
 
-
+.bg-gray {
+	background-color:#fcfcfc;
+}
 
 
 /*------------------------------------------------*/
@@ -158,4 +157,65 @@ height: 14px;
 
 .switch.disabled {
 	opacity:.5;
+}
+
+
+
+
+.margin-top-large { margin-top:20px; }
+.margin-top-medium { margin-top:10px; }
+.margin-top-small { margin-top:5px; }
+.margin-top-none { margin-top:0px; }
+
+.margin-bottom-large { margin-bottom:20px; }
+.margin-bottom-medium { margin-bottom:10px; }
+.margin-bottom-small { margin-bottom:5px; }
+.margin-bottom-none { margin-bottom:0px; }
+
+.margin-left-large { margin-left:20px; }
+.margin-left-medium { margin-left:10px; }
+.margin-left-small { margin-left:5px; }
+.margin-left-none { margin-left:0px; }
+
+.margin-right-large { margin-right:20px; }
+.margin-right-medium { margin-right:10px; }
+.margin-right-small { margin-right:5px; }
+.margin-right-none { margin-right:0px; }
+
+
+.padding-top-large { padding-top:20px; }
+.padding-top-medium { padding-top:10px; }
+.padding-top-small { padding-top:5px; }
+.padding-top-none { padding-top:0px; }
+
+.padding-bottom-large { padding-bottom:20px; }
+.padding-bottom-medium { padding-bottom:10px; }
+.padding-bottom-small { padding-bottom:5px; }
+.padding-bottom-none { padding-bottom:0px; }
+
+.padding-left-large { padding-left:20px; }
+.padding-left-medium { padding-left:10px; }
+.padding-left-small { padding-left:5px; }
+.padding-left-none { padding-left:0px; }
+
+.padding-right-large { padding-right:20px; }
+.padding-right-medium { padding-right:10px; }
+.padding-right-small { padding-right:5px; }
+.padding-right-none { padding-right:0px; }
+
+
+
+.glyphicon.spinning {
+    animation: spin 1s infinite linear;
+    -webkit-animation: spin2 1s infinite linear;
+}
+
+@keyframes spin {
+    from { transform: scale(1) rotate(0deg); }
+    to { transform: scale(1) rotate(360deg); }
+}
+
+@-webkit-keyframes spin2 {
+    from { -webkit-transform: rotate(0deg); }
+    to { -webkit-transform: rotate(360deg); }
 }

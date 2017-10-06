@@ -80,6 +80,13 @@ app.put('/api/regulate/:id/:value',function(req,res){
 	res.json({"ok":true});
 });
 
+app.get('/api/restart',function(req,res){
+	process.exit();
+});
+
+
+
+
 // Start and initialize the node server on local host port 8080
 http.listen(9009,function(){
 	console.log("Connected HTTP");

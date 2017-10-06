@@ -1,20 +1,20 @@
-<div class="panel panel-default panel-with-padding">
-	<div class="device">
-		<div class="device-header">
-	 		<div class="pull-left label bigger" ng-class="{ 'label-success': device.autorun, 'label-info': !device.autorun }">
-				{{ device.measurement_recount }}&nbsp;W
-			</div>
-
-			<div class="pull-right">
-				<a class="label label-default bigger" ng-click="openSettings()">...</a>
-			</div>
-
-			<h4 title="{{ device.description }}">
-				<label>{{ device.alias }}</label>
-			</h4>
+<div class="panel panel-default device" ng-class="{ 'panel-success': isAutorun(), 'panel-primary': !isAutorun() && device.regulation == 100 }">
+	<div class="panel-heading">
+		<div class="pull-left label bigger" ng-class="{ 'label-success': device.autorun, 'label-info': !device.autorun }">
+			{{ device.measurement_recount }}&nbsp;W
 		</div>
 
-		<device-chart data="device.measurement_recount"></device-chart>
+		<div class="pull-right">
+			<a class="btn btn-default btn-xs" ng-click="openSettings()">...</a>
+		</div>
+
+		<h4 class="panel-title" title="{{ device.description }}">
+			<label>{{ device.alias }}</label>
+		</h4>
+	</div>
+	<div class="panel-body">
+		<device-chart ng-if="device.address == 'esp32'" data="device.measurement"></device-chart>
+		<device-chart ng-if="device.address != 'esp32'" data="device.measurement_recount"></device-chart>
 		<div class="range-container" ng-if="device.is_linear === 1">
 			<span class="font-smaller left">0&nbsp;W</span>
 			<input type="range" min="0" max="100" 
@@ -23,13 +23,12 @@
 				/>
 			<span class="font-smaller right" title="Maximální výkon zařízení">{{ device.max_consumption }}&nbsp;W</span>
 		</div>
-
 		<div ng-if="!device.is_linear" style="margin:0 auto;">
 			<div class="switch" ng-class="{ 'on': device.regulation == 0, 'off': device.regulation == 100, 'disabled': loading.toggleOnOff }" ng-click="toggleOnOff()">
 				<div class="toggle"></div>
 				<span class="on">ZAPNUTO</span>
 				<span class="off">VYPNUTO</span>
 			</div>
-	</div>
+		</div>
 	</div>
 </div>

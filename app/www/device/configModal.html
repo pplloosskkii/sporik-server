@@ -1,6 +1,6 @@
 <div class="modal" ng-init="options = { showAdvanced: false, showAutorunOptions: device.autorun }">
 	<div class="modal-dialog" role="document">
-		<form class="modal-content" ng-submit="">
+		<form class="modal-content" ng-submit="close(device)" name="editForm">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 				<h4 class="modal-title">Nastavení zařízení</h4>
@@ -8,11 +8,11 @@
 			<div class="modal-body form-group-lg">
 				<div class="form-group">
 					<label>Adresa zařízení</label>
-					<input type="text" ng-model="device.address" class="form-control disabled" disabled="disabled">
+					<input type="text" ng-model="device.address" class="form-control disabled" ng-disabled="!isCreatingNew" ng-required="required">
 				</div>
 				<div class="form-group">
 					<label>Název zařízení</label>
-					<input type="text" ng-model="device.alias" class="form-control" placeholder="např. Bojler">
+					<input type="text" ng-model="device.alias" class="form-control" placeholder="např. Bojler" ng-required="required">
 				</div>
 				<div class="form-group">
 					<label>Krátký popis</label>
@@ -60,7 +60,7 @@
 			</div>
 			<div class="modal-footer">
 				<button type="button" class="btn btn-link pull-left" ng-click="close(false)" data-dismiss="modal">Zrušit</button>
-				<button type="submit" class="btn btn-primary" ng-click="close(device)" data-dismiss="modal">Uložit</button>
+				<button type="submit" class="btn btn-primary">Uložit</button>
 			</div>
 		</form>
 	</div>

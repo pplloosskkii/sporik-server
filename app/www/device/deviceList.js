@@ -21,7 +21,6 @@ sporikApp.directive('deviceList', ['Devices', '$timeout', '$rootScope', function
     	fetchDevices();
 
         $rootScope.$on('reloadDevices', function () {
-            console.log('received')
             fetchDevices();
         })
 	},

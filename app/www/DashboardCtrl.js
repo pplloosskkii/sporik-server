@@ -1,20 +1,15 @@
-sporikApp.controller('sporikDashboard', ['Devices', 'Elmer', '$timeout', function(Devices, Elmer, $timeout) {
-	scope = this;
-	scope.elmer = {};
+sporikApp.controller('sporikDashboard', ['Devices', 'Elmer', '$interval', function(Devices, Elmer, $interval) {
+	var $scope = this;
+	$scope.elmer = { ok: false };
+	$scope.showElmerGraph = true;
 
 	load = function () {
-
+		$interval(function () {
+			Elmer.process(function (data) {
+				$scope.elmer = angular.copy(data);
+			});
+		}, 2500);
 	}
-
-
-	// for future use
-	scope.get = function (address) {
-		Devices.get(address).then(function (data) {
-			//
-		});
-	}
-
-
 
 	load();
 
