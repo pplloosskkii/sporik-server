@@ -34,7 +34,7 @@ var DeviceDb = function () {
 
 			},
 			list: function (params, cb) {
-				var query = connection.query('SELECT * FROM devices WHERE ? ORDER BY phase', params, function(err, result) {
+				var query = connection.query('SELECT * FROM devices WHERE ? ORDER BY priority, phase', params, function(err, result) {
 					if (err) throw new Error(err);
 					cb && cb(result);
 				});
@@ -43,6 +43,18 @@ var DeviceDb = function () {
 				var query = connection.query('UPDATE devices SET ? WHERE devices.address = ?', [ data, address ], function(err, result) {
 					if (err) throw new Error(err);
 					cb && cb(result);
+				});
+			}
+		},
+		stats: {
+			insert: function (deviceData, cb) {
+				var insert = {
+					device: deviceData.address,
+					kwh: deviceData.kWh
+				}
+				connection.query('INSERT INTO measurements SET ?', insert, function(err, result) {
+					if (err) throw new Error(err);
+		  			cb && cb(result);
 				});
 			}
 		}

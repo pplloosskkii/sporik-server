@@ -98,16 +98,20 @@ sporikApp.directive('device', ['AppConfig', '$timeout', 'Devices', 'ModalService
 					templateUrl: AppConfig.templates.configModal,
 					scope: settingsScope,
 					showClose: true,
+					animation: false,
 					controller: ['$scope', 'close', function (scope, close) {
 						scope.close = function (param) { close(param); }	
 					}],
 					controllerAs: 'config'
 				}).then(function(modal) {
+					console.log(1);
 					modal.element.modal();
+					console.log(2);
 					modal.close.then(function(result) {
+						console.log(3);
 						if (result === false) return;
 						//scope.device = angular.copy(result);
-						for (var i in {'autorun':1, 'autorun_max':1, 'alias':1, 'description':1, 'phase':1, 'max_consumption':1}) {
+						for (var i in {'autorun':1, 'autorun_max':1, 'alias':1, 'description':1, 'phase':1, 'max_consumption':1, 'priority': 1}) {
 							scope.device[i] = result[i];
 						}
 						scope.saveDevice();

@@ -1,5 +1,5 @@
 var single;
-var DEBUG = false;
+var DEBUG = require('./Debug');
 
 
 var RelayRegulator = function () {

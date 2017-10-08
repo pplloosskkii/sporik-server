@@ -22,6 +22,7 @@
     "jquery": "^3.2.0",
     "mqtt": "^1.14.0",
     "mysql": "^2.12.0",
+    "node-schedule": "^1.2.5",
     "q": "^1.4.1"
   },
   "devDependencies": {

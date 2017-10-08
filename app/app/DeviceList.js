@@ -1,17 +1,21 @@
+var single;
+
 var Dictionary = require('dictionaryjs');
 var q = require('q');
 var Device = require('./Device');
 var DeviceDb = require('./DeviceDb')();
-var mqtt = require('./MqttClient');
-var single;
+var DEBUG = require('./Debug');
 
-var DEBUG = false;
+var mqttWrapper = require("./MqttWrapper")()
 
-var DeviceList = function (mqtt) {
+var interval;
+var that;
+
+var DeviceList = function () {
 	var devices = new Dictionary();
 	var mqttRegister = function (address) {
-		DEBUG && console.log("MQTT REGISTER", address);
-		mqtt.publish('sporik/register', '{"address": "' + address + '"}');
+		DEBUG.log("MQTT REGISTER", address);
+		mqttWrapper.publish('sporik/register', '{"address": "' + address + '"}');
 	}
 
 	return {
@@ -22,7 +26,6 @@ var DeviceList = function (mqtt) {
 			var deferred = q.defer();
 			if (!devices.has(address) || forcePublish === true) {
 				DeviceDb.device.fetch(address, function (data) {
-					//if (address == 'sporik6') console.log('RESULT FROM DB:',data);
 					if (data && data.length) {
 						var newDevice = new Device(data[0]);
 						devices.set(address, newDevice);
@@ -36,8 +39,6 @@ var DeviceList = function (mqtt) {
 							deferred.resolve(newDevice);
 						})
 					}
-
-					//if (address == 'sporik6') console.log('DEVICES:',devices.get('sporik6'));
 				})
 			} else {
 				deferred.resolve(devices.get(address));
@@ -57,13 +58,21 @@ var DeviceList = function (mqtt) {
 					}
 				}
 			})
+		},
+		flushStats: function () {
+			// every X min obtain stats and push them to db
+			this.list().forEach(function (key, single) {
+				var device = single.get();
+				DeviceDb.stats.insert({ address: device.address, kWh: device.stats.short.kWh });
+				single.resetShortStats();
+			});
 		}
 	};
 }
 
-module.exports = function (mqtt) {
+module.exports = function () {
 	if (typeof single == 'undefined') {
-		return single = new DeviceList(mqtt);
+		return single = new DeviceList();
 	} else {
 		return single;
 	}

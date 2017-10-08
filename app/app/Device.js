@@ -1,9 +1,6 @@
 var DeviceDb = require('./DeviceDb')();
-var mqtt = require('mqtt');
-var client  = mqtt.connect('mqtt://192.168.1.99');
-
-var DEBUG = false;
-
+var mqttWrapper = require("./MqttWrapper")();
+var DEBUG = require('./Debug');
 
 var Device = function (param) {  
 	var obj = {
@@ -20,6 +17,17 @@ var Device = function (param) {
 		alias: null,
 		description: null,
 		is_linear:null,
+		priority: null,
+	};
+
+	var stats = {
+		wattsTotal: 0,
+		hits: 0,
+		kWh: 0
+	};
+
+	var shortStats = {
+		kWh: 0
 	};
 
 	if ((typeof param).toLowerCase() === 'string') {
@@ -42,11 +50,15 @@ var Device = function (param) {
 			for (var i in obj) {
 				newObj[i] = obj[i];
 			}
-			newObj.measurement_recount = Math.max(0, (obj.max_consumption / 100) * obj.regulation);
+			newObj.measurement_recount = this.recount(obj.max_consumption, obj.regulation);
+			newObj.stats = { short: shortStats, long: stats }
 			return newObj;
 		},
+		recount: function (max_consumption, regulation) {
+			return Math.max(0, (max_consumption / 100) * regulation);
+		},
 		update: function (newData) {
-			for (var i in {'autorun':0, 'autorun_max':0, 'phase':0, 'alias':0, 'description':0, 'is_linear':0, 'max_consumption':0}) {
+			for (var i in {'autorun':0, 'autorun_max':0, 'phase':0, 'alias':0, 'description':0, 'is_linear':0, 'max_consumption':0, 'priority': 0}) {
 				obj[i] = newData[i];
 			}
 			DeviceDb.device.update(obj.address, obj);
@@ -62,7 +74,7 @@ var Device = function (param) {
 			DeviceDb.device.update(obj.address, param);
 
 			if (publish && typeof param['regulation'] !== 'undefined') {
-				client.publish('sporik/regulate', '{"address":"' + obj.address + '","value":' + param['regulation'] + '}');
+				mqttWrapper.publish('sporik/regulate', '{"address":"' + obj.address + '","value":' + param['regulation'] + '}');
 			}
 		},
 		isAlive: function () {
@@ -81,7 +93,23 @@ var Device = function (param) {
 		},
 		toString: function () {
 			return "Device: " + obj.address + " (" + obj.alias + ") - " + obj.description;
+		},
+
+		// 1 kWh = 3 600 000 Ws
+		recountEnergy: function () {
+			stats.wattsTotal += this.get().measurement_recount;
+			stats.hits++;
+			if (stats.wattsTotal > 36000) { // 0.01 kWh 
+				stats.wattsTotal = 0;
+				stats.hits = 0;
+				stats.kWh = Math.round(stats.kWh, 2) + 0.01; // increment
+				shortStats.kWh = Math.round(shortStats.kWh, 2) + 0.01; // increment
+			}
+		},
+		resetShortStats: function () {
+			shortStats.kWh = 0;
 		}
+
 	}
 };
 

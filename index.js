@@ -1,9 +1,23 @@
+
+// EXPRESS
 var app = require('express')();
 var http = require('http').Server(app);
 var bodyParser = require("body-parser");
-var client = require("./app/app/MqttClient");
-var devices = require("./app/app/DeviceList")(client);
+
+// MQTT AND STUFF
+var mqtt = require('mqtt');
+var client  = mqtt.connect('mqtt://192.168.1.99');
+var mqttWrapper = require("./app/app/MqttWrapper")(client);
+
+// MODEL
+var devices = require("./app/app/DeviceList")(mqttWrapper);
+var mqttSporikClient = require("./app/app/MqttClient")(mqttWrapper, devices);
 var Elmer = require('./app/app/Elmer')();
+
+// SCHEDULER
+var schedule = require('node-schedule');
+
+// other
 var DEBUG = false;
 
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -16,7 +30,7 @@ app.use(function (req, res, next) {
     next();
 });
 
-console.log('initting');
+console.log('Sporik Server Initting...');
 
 app.get('/api/list',function(req, res){
 	ret = [];
@@ -70,13 +84,13 @@ app.get('/api/elmer',function(req,res){
 
 app.put('/api/toggle/:id',function(req,res){
 	DEBUG && console.log('got toggle command for id', req.params.id);
-	client.publish('sporik/toggle', '{"address": "' + req.params.id + '"}');
+	mqttWrapper.publish('sporik/toggle', '{"address": "' + req.params.id + '"}');
 	res.json({"ok":true});
 });
 
 app.put('/api/regulate/:id/:value',function(req,res){
 	DEBUG && console.log('got regulate command for id', req.params.id, 'value', req.params.value);
-	client.publish('sporik/regulate', '{"address": "' + req.params.id + '", "value": ' + req.params.value + '}');
+	mqttWrapper.publish('sporik/regulate', '{"address": "' + req.params.id + '", "value": ' + req.params.value + '}');
 	res.json({"ok":true});
 });
 
@@ -85,9 +99,15 @@ app.get('/api/restart',function(req,res){
 });
 
 
+var job = schedule.scheduleJob('0,15,30,45 * * * *', function(){
+	devices.flushStats();
+});
+
+
+
 
 
 // Start and initialize the node server on local host port 8080
 http.listen(9009,function(){
-	console.log("Connected HTTP");
+	console.log("HTTP Server ready.");
 });

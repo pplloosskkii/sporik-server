@@ -1,6 +1,6 @@
 
 var single;
-var DEBUG = false;
+var DEBUG = require('./Debug');
 
 
 var LinearRegulator = function () {
@@ -17,7 +17,7 @@ var LinearRegulator = function () {
 		var newRegulation = parseInt(deviceData.regulation) + coef;
 		if (newRegulation > 100 || newRegulation < 0) return lowerConsumption(device, powerAvailable / 2)
 		lastRegulationDirection = 'down';
-		DEBUG && console.log('--- reg:', deviceData.regulation, 'coef:', coef, 'newreg:', newRegulation);
+		DEBUG.log('--- reg:', deviceData.regulation, 'coef:', coef, 'newreg:', newRegulation);
 		device.updateSingle({'regulation': newRegulation }, true); // force
 	}
 
@@ -27,7 +27,7 @@ var LinearRegulator = function () {
 		if (newRegulation > 100 || newRegulation < 0)  return higherConsumption(device, powerAvailable / 2)
 		//if (newRegulation >= 100) newRegulation = 100;
 		lastRegulationDirection = 'up';
-		DEBUG && console.log('+++ reg:', deviceData.regulation, 'coef:', coef, 'newreg:', newRegulation);
+		DEBUG.log('+++ reg:', deviceData.regulation, 'coef:', coef, 'newreg:', newRegulation);
 		device.updateSingle({'regulation': newRegulation }, true); // force publish message
 	}
 
@@ -44,18 +44,18 @@ var LinearRegulator = function () {
 		var powerAvailable = Math.round(deviceData.autorun_max - phaseValue);
 		var overflow = elmerValues['overflow'][deviceData.phase - 1];
 
-		deviceData.phase == 1 && DEBUG && console.log('Power avail:', powerAvailable, 'overflow:', elmerValues['overflow'], 'reg:', deviceData.regulation);
+		deviceData.phase == 1 && DEBUG.log('Power avail:', powerAvailable, 'overflow:', elmerValues['overflow'], 'reg:', deviceData.regulation);
 
 		if (overflow > 0 && powerAvailable < 0) {
 			powerAvailable = Math.abs(powerAvailable);
-			DEBUG && console.log('Inverting power avail:', powerAvailable);
+			DEBUG.log('Inverting power avail:', powerAvailable);
 		}
 
 		// pokud je aktualni hodnota vyssi nez predtim (aka vyssi spotreba),
 		// a zaroven se i regulovalo nahoru
 		/*if (phaseValue > lastValues && lastRegulationDirection == 'up') {
 			powerAvailable = -1 * powerAvailable;
-			DEBUG && console.log('inverting power');
+			DEBUG.log('inverting power');
 		}*/
 
 		DEVICE_START_COEFICIENT = Math.round(deviceData.max_consumption / 100);

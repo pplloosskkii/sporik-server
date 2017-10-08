@@ -1,8 +1,5 @@
-////////?? NOT USED YET
-
-
 var single;
-var DEBUG = false;
+var DEBUG = require('./Debug');
 
 
 var ZeroRegulator = function () {
@@ -23,7 +20,7 @@ var ZeroRegulator = function () {
 			return lowerConsumption(device, powerAvailable / 2)
 		}
 		lastRegulationDirection = 'down';
-		DEBUG && device.phase == 2 && console.log('--- reg:', deviceData.regulation, 'coef:', coef, 'newreg:', newRegulation);
+		device.phase == 2 && DEBUG.log('--- reg:', deviceData.regulation, 'coef:', coef, 'newreg:', newRegulation);
 		device.updateSingle({'regulation': newRegulation }, true); // force
 	}
 
@@ -33,7 +30,7 @@ var ZeroRegulator = function () {
 		if (newRegulation > 100) newRegulation = 100;
 		if (newRegulation < 0)  return higherConsumption(device, powerAvailable / 2)
 		lastRegulationDirection = 'up';
-		DEBUG && device.phase == 2 && console.log('+++ reg:', deviceData.regulation, 'coef:', coef, 'newreg:', newRegulation);
+		device.phase == 2 && DEBUG.log('+++ reg:', deviceData.regulation, 'coef:', coef, 'newreg:', newRegulation);
 		device.updateSingle({'regulation': newRegulation }, true); // force publish message
 	}
 
@@ -58,7 +55,7 @@ var ZeroRegulator = function () {
 		}
 
 		DEVICE_START_COEFICIENT = Math.round(deviceData.max_consumption / 100);	
-		deviceData.phase == 2 && DEBUG && console.log('ZeroRegulator Measured:', phaseValue, 'overflow:', overflow);
+		deviceData.phase == 2 && DEBUG.log('ZeroRegulator Measured:', phaseValue, 'overflow:', overflow);
 
 		if (phaseValue == 0 && overflow == 0) return;
 		if (phaseValue > 0) {				

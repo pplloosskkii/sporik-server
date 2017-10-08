@@ -1,7 +1,10 @@
 <div class="panel panel-default device" ng-class="{ 'panel-success': isAutorun(), 'panel-primary': !isAutorun() && device.regulation == 100 }">
 	<div class="panel-heading">
-		<div class="pull-left label bigger" ng-class="{ 'label-success': device.autorun, 'label-info': !device.autorun }">
+		<div class="pull-left label bigger" ng-class="{ 'label-success': device.autorun, 'label-info': !device.autorun }" title="Okamžitý výkon">
 			{{ device.measurement_recount }}&nbsp;W
+		</div>
+		<div class="pull-left label bigger margin-left-small label-warning" title="Celková energie" ng-if="device.stats.long.kWh > 0">
+			{{ device.stats.long.kWh | number:2 }}&nbsp;kWh
 		</div>
 
 		<div class="pull-right">
