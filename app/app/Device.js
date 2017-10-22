@@ -99,16 +99,20 @@ var Device = function (param) {
 		recountEnergy: function () {
 			stats.wattsTotal += this.get().measurement_recount;
 			stats.hits++;
+			//console.log(stats.wattsTotal, stats.kWh, shortStats.kWh);
 			if (stats.wattsTotal > 36000) { // 0.01 kWh 
 				stats.wattsTotal = 0;
 				stats.hits = 0;
-				stats.kWh = Math.round(stats.kWh, 2) + 0.01; // increment
-				shortStats.kWh = Math.round(shortStats.kWh, 2) + 0.01; // increment
+				stats.kWh = stats.kWh + 0.01; // increment
+				shortStats.kWh = shortStats.kWh + 0.01; // increment
 			}
 		},
 		resetShortStats: function () {
 			shortStats.kWh = 0;
-		}
+		},
+		resetDailyStats: function () {
+			stats = { wattsTotal: 0, hits: 0, kWh: 0 };
+		},
 
 	}
 };

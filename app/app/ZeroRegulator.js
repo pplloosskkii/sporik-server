@@ -5,31 +5,27 @@ var DEBUG = require('./Debug');
 var ZeroRegulator = function () {
 	var data = {};
 	var elmerValues;
-	var lastValues;
-	var lastOverflow;
-	var lastRegulationDirection;
 
 	var deviceData;
 	var DEVICE_START_COEFICIENT;
+	var lastOverflow;
 
-	function lowerConsumption(device, powerAvailable) {
+	function powerDown(device, powerAvailable) {
 		var coef = Math.round(powerAvailable / (DEVICE_START_COEFICIENT * 2));
 		var newRegulation = parseInt(deviceData.regulation) + coef;
 		if (newRegulation > 100) newRegulation = 100;
 		if (newRegulation < 0) {
-			return lowerConsumption(device, powerAvailable / 2)
+			return powerDown(device, powerAvailable / 2)
 		}
-		lastRegulationDirection = 'down';
 		device.phase == 2 && DEBUG.log('--- reg:', deviceData.regulation, 'coef:', coef, 'newreg:', newRegulation);
 		device.updateSingle({'regulation': newRegulation }, true); // force
 	}
 
-	function higherConsumption(device, powerAvailable) {
+	function powerUp(device, powerAvailable) {
 		var coef = Math.round(powerAvailable / (DEVICE_START_COEFICIENT * 2));
 		var newRegulation = parseInt(deviceData.regulation) + coef;
 		if (newRegulation > 100) newRegulation = 100;
-		if (newRegulation < 0)  return higherConsumption(device, powerAvailable / 2)
-		lastRegulationDirection = 'up';
+		if (newRegulation < 0)  return powerUp(device, powerAvailable / 2)
 		device.phase == 2 && DEBUG.log('+++ reg:', deviceData.regulation, 'coef:', coef, 'newreg:', newRegulation);
 		device.updateSingle({'regulation': newRegulation }, true); // force publish message
 	}
@@ -44,9 +40,9 @@ var ZeroRegulator = function () {
 			return;
 		}
 
-		// get measurement of phase the device is on
-		var	phaseValue = (elmerValues['P' + deviceData.phase + 'A+'] / 10) || 0;
-		var overflow = elmerValues['overflow'][deviceData.phase - 1];
+		// get measurement of phase the device is on (in Watts)
+		var	elmerPhaseReading = (elmerValues['P' + deviceData.phase + 'A+'] / 10) || 0;
+		var elmerPhaseOverflow = elmerValues['overflow'][deviceData.phase - 1];
 
 		// autorun_max is the value we want to keep regulation on
 		if (deviceData.autorun_max != 0) {
@@ -55,21 +51,23 @@ var ZeroRegulator = function () {
 		}
 
 		DEVICE_START_COEFICIENT = Math.round(deviceData.max_consumption / 100);	
-		deviceData.phase == 2 && DEBUG.log('ZeroRegulator Measured:', phaseValue, 'overflow:', overflow);
 
-		if (phaseValue == 0 && overflow == 0) return;
-		if (phaseValue > 0) {				
-			if (overflow > 0 || (phaseValue < 200 && lastOverflow > 0)) {
-				// we have power to add
-				higherConsumption(device, phaseValue + (overflow * 100));
-			} else {
-				// decrease regulation
-				if (phaseValue < 50) phaseValue = phaseValue / 2;
-				lowerConsumption(device, -1 * phaseValue);
+		if (elmerPhaseReading == 0 && elmerPhaseOverflow == 0) {
+			return; // great, nothing more to do
+		}
+
+		// if there is some consumption or power available
+		if (elmerPhaseReading > 0) {
+			
+			// power available
+			if (elmerPhaseOverflow > 0 || (elmerPhaseReading < 200 && lastOverflow > 0)) {
+				powerUp(device, elmerPhaseReading + (elmerPhaseOverflow * 100));
+			} else { // decrease regulation
+				if (elmerPhaseReading < 50) elmerPhaseReading = elmerPhaseReading / 2;
+				powerDown(device, -1 * elmerPhaseReading);
 			}
 		}
-		lastValues = phaseValue;
-		lastOverflow = overflow;
+		lastOverflow = elmerPhaseOverflow;
 	}
 
 

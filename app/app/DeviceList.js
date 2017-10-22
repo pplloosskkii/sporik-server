@@ -24,6 +24,8 @@ var DeviceList = function () {
 		},
 		register: function (address, forcePublish) {
 			var deferred = q.defer();
+
+			// if not cached or force-pushed
 			if (!devices.has(address) || forcePublish === true) {
 				DeviceDb.device.fetch(address, function (data) {
 					if (data && data.length) {
@@ -65,6 +67,11 @@ var DeviceList = function () {
 				var device = single.get();
 				DeviceDb.stats.insert({ address: device.address, kWh: device.stats.short.kWh });
 				single.resetShortStats();
+			});
+		},
+		flushDailyStats: function () {
+			this.list().forEach(function (key, single) {
+				single.resetDailyStats();
 			});
 		}
 	};

@@ -99,10 +99,12 @@ app.get('/api/restart',function(req,res){
 });
 
 
-var job = schedule.scheduleJob('0,15,30,45 * * * *', function(){
+var flushStats = schedule.scheduleJob('0,15,30,45 * * * *', function(){
 	devices.flushStats();
 });
-
+var flushDailyStats = schedule.scheduleJob('1,0 * * *', function(){
+	devices.flushDailyStats();
+});
 
 
 
