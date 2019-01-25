@@ -1,0 +1,11 @@
+<span>
+    <span class="label label-danger bigger" ng-show="(data === '' || data === null) && errorText">
+        {{errorText}}
+    </span>
+    <span class="label label-success bigger" ng-show="data > 0">
+        {{data}} {{type}}
+    </span>
+    <span class="label label-warning bigger" ng-show="data === 0 && warningText">
+        {{warningText}}
+    </span>
+</span>

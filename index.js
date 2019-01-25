@@ -1,3 +1,8 @@
+//
+// SPORIK APP
+//
+// server module
+
 
 // EXPRESS
 var app = require('express')();
@@ -14,8 +19,12 @@ var devices = require("./app/app/DeviceList")(mqttWrapper);
 var mqttSporikClient = require("./app/app/MqttClient")(mqttWrapper, devices);
 var Elmer = require('./app/app/Elmer')();
 
+// DATABASE
+var db = require("./app/app/DeviceDb")();
+
 // SCHEDULER
 var schedule = require('node-schedule');
+
 
 // other
 var DEBUG = false;
@@ -32,7 +41,7 @@ app.use(function (req, res, next) {
 
 console.log('Sporik Server Initting...');
 
-app.get('/api/list',function(req, res){
+app.get('/api/devices',function(req, res){
 	ret = [];
 	devices.list().forEach(function(key, device) {
 		if (typeof device == 'undefined' || typeof device.isAlive != 'function' || !device.isAlive()) {
@@ -48,7 +57,7 @@ app.get('/api/list',function(req, res){
 	res.json({"devices": ret});
 });
 
-app.get('/api/get/:id',function(req,res){
+app.get('/api/devices/:id',function(req,res){
 	var ret = devices.list().get(req.params.id);
 	if (typeof ret == 'undefined') {
 		return res.status(404).json({ ok: false, reason: "404 Not Found" });
@@ -57,7 +66,7 @@ app.get('/api/get/:id',function(req,res){
 });
 
 
-app.put('/api/autorun/:id/:value/:maximum',function(req,res){
+app.put('/api/devices/:id/autorun/:value/:maximum',function(req,res){
 	var ret = devices.list().get(req.params.id);
 	if (typeof ret == 'undefined') {
 		return res.status(404).json({ ok: false, reason: "404 Not Found" });
@@ -66,7 +75,7 @@ app.put('/api/autorun/:id/:value/:maximum',function(req,res){
 	res.json({"ok":true});
 });
 
-app.post('/api/update/:id',function(req,res){
+app.post('/api/devices/:id',function(req,res){
 	var data = req.body;
 	
 	var device = devices.list().get(req.params.id);
@@ -77,23 +86,34 @@ app.post('/api/update/:id',function(req,res){
 	res.json({"ok":true});
 });
 
-
-app.get('/api/elmer',function(req,res){
-	res.json(Elmer.get());
-});
-
-app.put('/api/toggle/:id',function(req,res){
+// toggle on/off
+app.put('/api/devices/:id/toggle',function(req,res){
 	DEBUG && console.log('got toggle command for id', req.params.id);
 	mqttWrapper.publish('sporik/toggle', '{"address": "' + req.params.id + '"}');
 	res.json({"ok":true});
 });
 
-app.put('/api/regulate/:id/:value',function(req,res){
+// set regulation value
+app.put('/api/devices/:id/regulate/:value',function(req,res){
 	DEBUG && console.log('got regulate command for id', req.params.id, 'value', req.params.value);
 	mqttWrapper.publish('sporik/regulate', '{"address": "' + req.params.id + '", "value": ' + req.params.value + '}');
 	res.json({"ok":true});
 });
 
+// device stats
+app.get('/api/devices/:id/stats', function (req, res) {
+	db.stats.fetchMonthlyStats(req.params.id, function (data) {
+		res.json(data);
+	});
+});
+
+
+// fetch elmer
+app.get('/api/elmer',function(req,res){
+	res.json(Elmer.get());
+});
+
+// kill server
 app.get('/api/restart',function(req,res){
 	process.exit();
 });
@@ -102,14 +122,13 @@ app.get('/api/restart',function(req,res){
 var flushStats = schedule.scheduleJob('0,15,30,45 * * * *', function(){
 	devices.flushStats();
 });
-var flushDailyStats = schedule.scheduleJob('1,0 * * *', function(){
+var flushDailyStats = schedule.scheduleJob('1 0 * * *', function(){
 	devices.flushDailyStats();
+	Elmer.flushDailyStats();
 });
 
 
-
-
-// Start and initialize the node server on local host port 8080
+// Start and initialize the node server on local host port
 http.listen(9009,function(){
 	console.log("HTTP Server ready.");
 });

@@ -55,7 +55,6 @@ sporikApp.directive('device', ['AppConfig', '$timeout', 'Devices', 'ModalService
 						}
 					});
 				});
-
 			};
 
 			scope.turnOff = function () {
@@ -104,14 +103,11 @@ sporikApp.directive('device', ['AppConfig', '$timeout', 'Devices', 'ModalService
 					}],
 					controllerAs: 'config'
 				}).then(function(modal) {
-					console.log(1);
 					modal.element.modal();
-					console.log(2);
 					modal.close.then(function(result) {
-						console.log(3);
 						if (result === false) return;
 						//scope.device = angular.copy(result);
-						for (var i in {'autorun':1, 'autorun_max':1, 'alias':1, 'description':1, 'phase':1, 'max_consumption':1, 'priority': 1}) {
+						for (var i in {'autorun':1, 'autorun_max':1, 'alias':1, 'description':1, 'phase':1, 'max_consumption':1, 'priority': 1, 'is_linear':1 }) {
 							scope.device[i] = result[i];
 						}
 						scope.saveDevice();
@@ -119,11 +115,31 @@ sporikApp.directive('device', ['AppConfig', '$timeout', 'Devices', 'ModalService
 				});				
 			}
 
+			
 			scope.saveDevice = function () {
 				Devices.save(scope.device).then(function (data) {
 					scope.$emit('reloadDevices');
 				});	
 			}
+
+
+			scope.showStatsModal = function() {
+				statsScope = scope.$new();
+				statsScope.device = angular.copy(scope.device);
+
+				ModalService.showModal({
+					scope: settingsScope,
+					templateUrl: AppConfig.templates.statsModal,
+					controller: ['$scope', 'close', function (scope, close) {
+						scope.close = function (param) { close(param); }
+					}],
+					controllerAs: 'stats'
+				}).then(function(modal) {
+					modal.element.modal();
+					modal.close.then(function(result) {
+					});
+				});
+			};
 
 		}
 	}

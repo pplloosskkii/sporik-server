@@ -3,7 +3,24 @@
     position: fixed;
     overflow:hidden;
 }*/
+body {
+	background:#eee;
 
+}
+
+.navbar {
+	border-radius:0;
+	border:0;
+}
+.panel {
+	border: 1px solid #aaa;
+	border-radius: 0px;
+}
+.panel-chart {
+	border:0;
+	padding:20px;
+	padding-bottom:0;
+}
 
 .ng-cloak { display:none !important; }
  #content { margin-top:20px; }
@@ -22,17 +39,18 @@ h1 {
 }
 
 .bigger { font-size:13px; }
+.label.label-bigger { font-size: 14px; }
 
 .p1 {
-	background-color:#c00 !important;
+	background-color:#603803 !important;
 }
 
 .p2 {
-	background-color:#0c0 !important;
+	background-color:#000 !important;
 }
 
 .p3 {
-	background-color:#0cc !important;
+	background-color:#aaa !important;
 }
 
 .c1 {
@@ -83,6 +101,19 @@ h1 {
 
 .phase h3, .phase h4 {
 	text-align: center;
+}
+
+.phase.phase1 {
+	border-top:10px solid rgba(104, 59, 0, 0.3);
+	background:rgba(104, 59, 0, 0.1);
+}
+.phase.phase2 {
+	border-top:10px solid rgba(0, 0, 0, 0.3);
+	background:rgba(0, 0, 0, 0.1);
+}
+.phase.phase3 {
+	border-top:10px solid rgba(100, 100, 100, 0.3);
+	background:rgba(100, 100, 100, 0.1);
 }
 
 .text-small { 

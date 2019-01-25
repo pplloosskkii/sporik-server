@@ -5,19 +5,27 @@ var DEBUG = require('./Debug');
 var Device = function (param) {  
 	var obj = {
 		address: null, 
-		autorun: null, 
-		autorun_max: null, 
+		autorun: 0, 
+		autorun_max: 0, 
 		measurement: null, 
 		measurement_changed_at: null,
 		regulation: null,
 		regulation_changed_at: null,
-		is_registered: false,
+		is_registered: 0,
 		max_consumption: null,
 		phase: null,
 		alias: null,
 		description: null,
 		is_linear:null,
 		priority: null,
+	};
+	var measurements = {
+		regulation: 0,
+		voltage: 0,
+		current: 0,
+		energy: 0,
+		frequency: 0,
+		is_measured: false
 	};
 
 	var stats = {
@@ -32,7 +40,7 @@ var Device = function (param) {
 
 	if ((typeof param).toLowerCase() === 'string') {
 		// param is address
-		obj.address = address;
+		obj.address = param;
 		obj.autorun = 0;
 	} else if ((typeof param).toLowerCase() === 'object') {
 		// param is full object from db 
@@ -51,6 +59,7 @@ var Device = function (param) {
 				newObj[i] = obj[i];
 			}
 			newObj.measurement_recount = this.recount(obj.max_consumption, obj.regulation);
+			newObj.measurements = measurements;
 			newObj.stats = { short: shortStats, long: stats }
 			return newObj;
 		},
@@ -78,10 +87,12 @@ var Device = function (param) {
 			}
 		},
 		isAlive: function () {
-			return (new Date().valueOf()) - obj.measurement_changed_at < 30000; // older than 30s are dead
+			var isAlive = (new Date().valueOf() - obj.measurement_changed_at) < 30000;
+			DEBUG.log("isAlive:", isAlive, " changed at: ", new Date().valueOf(), " - ", obj.measurement_changed_at);
+			return isAlive; // older than 30s are dead
 		},
 		isRegulable: function () {
-			return (obj.autorun == true && obj.autorun_max >= 0);
+			return (obj.autorun == true && Number.isInteger(obj.autorun_max));
 		},
 		isLinear: function () {
 			return (obj.is_linear == true);
@@ -113,6 +124,17 @@ var Device = function (param) {
 		resetDailyStats: function () {
 			stats = { wattsTotal: 0, hits: 0, kWh: 0 };
 		},
+		setMeasurement: function (measurementData) {
+			var tmpMeasure = {
+				'regulation': parseInt(measurementData.r),
+				'voltage': parseFloat(measurementData.v),
+				'current': parseFloat(measurementData.i),
+				'energy': parseInt(measurementData.e),
+				'frequency': parseFloat(measurementData.f),
+				'is_measured': (typeof measurementData.v !== 'undefined' && typeof measurementData.f !== 'undefined')
+			};
+			measurements = tmpMeasure;
+		}
 
 	}
 };

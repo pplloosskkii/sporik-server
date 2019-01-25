@@ -3,12 +3,17 @@ sporikApp.controller('sporikDashboard', ['Devices', 'Elmer', '$interval', functi
 	$scope.elmer = { ok: false };
 	$scope.showElmerGraph = true;
 
+	
+	var processElmer = function() {
+		Elmer.process(function (data) {
+			$scope.elmer = angular.copy(data);
+		});
+	}
+
 	load = function () {
-		$interval(function () {
-			Elmer.process(function (data) {
-				$scope.elmer = angular.copy(data);
-			});
-		}, 2500);
+		processElmer();
+	
+		$interval(processElmer, 2500);
 	}
 
 	load();

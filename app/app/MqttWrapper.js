@@ -4,7 +4,7 @@ var client;
 
 var MqttWrapper = {
 	publish: function (topic, content) {
-		DEBUG.log("<-", content, "(", topic, ")");
+		DEBUG.log("<-", topic, "(", content, ")");
 		client.publish(topic, content);
 	},
 	on: function (name, event) {

@@ -18,8 +18,9 @@ var DeviceDb = function () {
 					'address': device.address,
 					'alias': device.alias,
 					'description': device.description,
-					'max_consumption': device.maxConsumption,
-					'is_registered': device.isRegistered,
+					'max_consumption': device.max_consumption,
+					'is_registered': device.is_registered,
+					'autorun_max': device.autorun_max,
 				};
 				var query = connection.query('INSERT INTO devices SET ? ON DUPLICATE KEY UPDATE devices.address=devices.address;', insert, function(err, result) {
 					if (err) throw new Error(err);
@@ -56,7 +57,44 @@ var DeviceDb = function () {
 					if (err) throw new Error(err);
 		  			cb && cb(result);
 				});
+			},
+			insertElmerSum: function (deviceData, cb) {
+				connection.query('INSERT INTO stats SET ?', deviceData, function(err, result) {
+					if (err) throw new Error(err);
+		  			cb && cb(result);
+				});
+			},			
+			fetchMonthlyStats: function (device, cb) {
+				connection.query("SET @runtot:=0;", "", function () {} );
+				connection.query("SELECT q1.min_date, q1.max_date, q1.device, q1.day_total, (@runtot := @runtot + q1.day_total) AS total \
+				FROM \
+				(SELECT min(created_at) as min_date, max(created_at) as max_date, device, sum(kwh) as day_total \
+				FROM `measurements` as m \
+				WHERE device = ? \
+				AND created_at > NOW() - interval 1 month \
+				GROUP BY year(created_at), MONTH(created_at), day(created_at), device) as q1 ORDER by DATE(q1.min_date) ASC", device, function(err, result) {
+					if (err) throw new Error(err);
+		  			cb && cb(result);
+				});
 			}
+		},
+		weather: {
+			insert: function (data, cb) {
+				var insert = {
+					'rain_total': data.rain_total, 
+					'temperature_avg': data.temperature_avg, 
+					'temperature_min': data.temperature_min,
+					'temperature_max': data.temperature_max,
+					'prevalent_wind': data.prevalent_wind,
+					'maximum_wind': data.maximum_wind,
+					'average_wind': data.average_wind,
+				};
+				
+				connection.query('INSERT INTO weather SET ?', insert, function(err, result) {
+					if (err) throw new Error(err);
+		  			cb && cb(result);
+				});
+			},
 		}
 	};
 }

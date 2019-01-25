@@ -9,6 +9,7 @@ var ZeroRegulator = function () {
 	var deviceData;
 	var DEVICE_START_COEFICIENT;
 	var lastOverflow;
+	var lastRegulation = [];
 
 	function powerDown(device, powerAvailable) {
 		var coef = Math.round(powerAvailable / (DEVICE_START_COEFICIENT * 2));
@@ -17,8 +18,11 @@ var ZeroRegulator = function () {
 		if (newRegulation < 0) {
 			return powerDown(device, powerAvailable / 2)
 		}
-		device.phase == 2 && DEBUG.log('--- reg:', deviceData.regulation, 'coef:', coef, 'newreg:', newRegulation);
-		device.updateSingle({'regulation': newRegulation }, true); // force
+		//device.phase == 2 && DEBUG.log('--- reg:', deviceData.regulation, 'coef:', coef, 'newreg:', newRegulation);
+		if (lastRegulation[device] != newRegulation) {
+			device.updateSingle({'regulation': newRegulation }, true); // force
+			lastRegulation[device] = newRegulation;
+		}
 	}
 
 	function powerUp(device, powerAvailable) {
@@ -26,8 +30,11 @@ var ZeroRegulator = function () {
 		var newRegulation = parseInt(deviceData.regulation) + coef;
 		if (newRegulation > 100) newRegulation = 100;
 		if (newRegulation < 0)  return powerUp(device, powerAvailable / 2)
-		device.phase == 2 && DEBUG.log('+++ reg:', deviceData.regulation, 'coef:', coef, 'newreg:', newRegulation);
-		device.updateSingle({'regulation': newRegulation }, true); // force publish message
+		//device.phase == 2 && DEBUG.log('+++ reg:', deviceData.regulation, 'coef:', coef, 'newreg:', newRegulation);
+		if (lastRegulation[device] != newRegulation) {
+			device.updateSingle({'regulation': newRegulation }, true); // force
+			lastRegulation[device] = newRegulation;
+		}
 	}
 
 

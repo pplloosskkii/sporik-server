@@ -6,12 +6,12 @@ var Device = require('./Device');
 var DeviceDb = require('./DeviceDb')();
 var DEBUG = require('./Debug');
 
-var mqttWrapper = require("./MqttWrapper")()
+//var mqttWrapper = require("./MqttWrapper")()
 
 var interval;
 var that;
 
-var DeviceList = function () {
+var DeviceList = function (mqttWrapper) {
 	var devices = new Dictionary();
 	var mqttRegister = function (address) {
 		DEBUG.log("MQTT REGISTER", address);
@@ -22,18 +22,33 @@ var DeviceList = function () {
 		list: function () {
 			return devices;
 		},
+		get: function (address) {
+			var deferred = q.defer();
+			if (devices.has(address)) {
+				deferred.resolve(devices.get(address));
+			} else {
+				DeviceDb.device.fetch(address, function (data) {
+					var device = new Device(data[0]);
+					devices.set(address, device);
+					deferred.resolve(device);
+				});
+			}
+			return deferred.promise;
+		},
 		register: function (address, forcePublish) {
 			var deferred = q.defer();
-
-			// if not cached or force-pushed
+			DEBUG.log("is registered?", devices.has(address));
+			// if not cached or force-pushed	
 			if (!devices.has(address) || forcePublish === true) {
 				DeviceDb.device.fetch(address, function (data) {
 					if (data && data.length) {
+						//console.log("REGISTERING EXISTING ADDRESS:",data)
 						var newDevice = new Device(data[0]);
 						devices.set(address, newDevice);
 						mqttRegister(address);
 						deferred.resolve(newDevice);
 					} else {
+						//console.log("REGISTERING ADDRESS:",address)
 						var newDevice = new Device(address); // init default
 						devices.set(address, newDevice);
 						DeviceDb.device.add(newDevice.get(), function () {
@@ -77,9 +92,9 @@ var DeviceList = function () {
 	};
 }
 
-module.exports = function () {
+module.exports = function (mqtt) {
 	if (typeof single == 'undefined') {
-		return single = new DeviceList();
+		return single = new DeviceList(mqtt);
 	} else {
 		return single;
 	}

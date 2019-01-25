@@ -11,15 +11,18 @@
         
         <link rel="stylesheet" media="all" href="./node_modules/bootstrap/dist/css/bootstrap.min.css" type="text/css" />
         <link rel="stylesheet" media="all" href="./app/www/main.css" type="text/css" />
+        <link rel="stylesheet" media="all" href="./node_modules/font-awesome/css/font-awesome.min.css">
     </head>
-    <body class="container" ng-app="sporikApp" ng-controller="sporikDashboard as main">
+    <body ng-app="sporikApp" ng-controller="sporikDashboard as main">
         <sporik-navigation></sporik-navigation>
-        <div class="col-md-12 margin-top-medium margin-bottom-medium" ng-show="main.showElmerGraph">
-            <div class="text-center" ng-show="!main.elmer.ok"><span class="glyphicon glyphicon-refresh spinning"></span> Načítám graf</div>
-            <elmer-chart data="main.elmer" width="1100" height="120" columns="180" colors="['#cc0000', '#00cc00', '#00cccc']"></elmer-chart>
-        </div>
+        <div class="container">
+            <div class="col-md-12 margin-top-medium margin-bottom-large panel panel-chart" ng-show="main.showElmerGraph" >
+                <div class="text-center" ng-show="!main.elmer.ok"><span class="glyphicon glyphicon-refresh spinning"></span> Načítám graf</div>
+                <elmer-chart data="main.elmer" width="1100" height="120" columns="180" colors="['#603803', '#000000', '#aaaaaa']"></elmer-chart>
+            </div>
 
-        <div class="row" ng-cloak id="content" device-list></div>
+            <div class="row" ng-cloak id="content" device-list></div>
+        </div>
     </body>
 
     <script src="./node_modules/jquery/dist/jquery.min.js"></script>
@@ -38,6 +41,8 @@
     <script src="./app/www/navigation/navigation.js"></script>
     <script src="./app/www/device/device.js"></script>
     <script src="./app/www/device/deviceList.js"></script>
+    <script src="./app/www/device/measurementDetail.js"></script>
     <script src="./app/www/device/deviceChart.js"></script>
+    <script src="./app/www/device/deviceStats.js"></script>
     <script src="./app/www/DashboardCtrl.js"></script>
 </html>

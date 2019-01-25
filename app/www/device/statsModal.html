@@ -1,0 +1,24 @@
+<div class="modal" ng-init="">
+	<div class="modal-dialog" role="document">
+		<form class="modal-content" name="editForm">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h4 class="modal-title">Statistiky zařízení {{ device.alias }}</h4>
+			</div>
+			<div class="modal-body form-group-lg">
+				<div>
+					<device-stats address="device.address"></device-stats>
+                </div>
+                <p>
+                    Graf přibližné spotřeby energie zařízení. Pokud je nastaveno řízení na 0W, je toto reálně ušetřená spotřeba ze sítě.
+                </p>
+                <p>
+                    Modře je spotřeba po dnech, šedivě je klouzavý součet.
+                </p>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-link pull-left" ng-click="close(false)" data-dismiss="modal">Zrušit</button>
+			</div>
+		</form>
+	</div>
+</div>

@@ -18,20 +18,28 @@
 					<label>Krátký popis</label>
 					<input type="text" ng-model="device.description" class="form-control" placeholder="např. Bojler v technické místnosti, 200l">
 				</div>
-				<div class="form-group">
+				<!-- <div class="form-group">
 					<label>Priorita</label>
 					<small>Vyšší číslo znamená vyšší prioritu. Výchozí je 0.</small>
 					<input type="number" ng-model="device.priority" class="form-control" placeholder="-100">
-				</div>
+				</div> -->
 				<div class="panel panel-default">
 					<div class="panel-heading">Režim funkce zařízení</div>
 					<div class="panel-body">
 						<div class="form-group">
 							<label class="radio-inline"><input type="radio" ng-model="device.autorun" ng-value="0">Ručně</label>
 							<label class="radio-inline"><input type="radio" ng-model="device.autorun" ng-value="1">Automaticky</label>
+							<p class="text-info margin-top-medium" ng-if="device.autorun == 0">
+								Zařízení je spínáno dle libosti uživatelem.
+							</p>
+							<p class="text-success margin-top-medium" ng-if="device.autorun == 1">
+								Zařízení je spínáno automaticky dle toho, jak je nastavena hodnota regulace. 
+								Jakmile existuje přetok energie na měřícím bodě, zařízení je spínáno tak, aby 
+								energie do a ze sítě byla co nejmenší.
+							</p>
 						</div>
 						<div class="form-group" ng-if="device.autorun">
-							<p>Zadejte hodnotu regulace ve Wattech. Na tuto hodnotu bude regulována celková spotřeba na měřícím bodě.</p>
+							<p>Zadejte hodnotu regulace ve Wattech. Na tuto hodnotu bude regulována celková spotřeba na měřícím bodě. Výchozí hodnota je 0.</p>
 							<input type="number" ng-model="device.autorun_max" class="form-control">
 						</div>
 					</div>
@@ -44,16 +52,29 @@
 					<div class="panel-body" ng-show="options.showAdvanced">
 						<p class="text-danger">Pozor! Změna těchto nastavení může způsobit nesprávnou funkčnost zařízení. Měli byste vědět, co děláte.</p>
 						<div class="form-group">
-							<label>Fáze</label>
+							<label>Fáze, na kterou je zařízení připojeno</label>
 							<div>
-								<div class="radio-inline"><input type="radio" ng-model="device.phase" ng-value="1">L1</div>
-								<div class="radio-inline"><input type="radio" ng-model="device.phase" ng-value="2">L2</div>
-								<div class="radio-inline"><input type="radio" ng-model="device.phase" ng-value="3">L3</div>
+								<label class="radio-inline"><input type="radio" ng-model="device.phase" ng-value="1"><span class="label label-bigger p1">L1</span></label>
+								<label class="radio-inline"><input type="radio" ng-model="device.phase" ng-value="2"><span class="label label-bigger p2">L2</span></label>
+								<label class="radio-inline"><input type="radio" ng-model="device.phase" ng-value="3"><span class="label label-bigger p3">L3</span></label>
 							</div>
 						</div>
-						<div class="form-group">
+						<div class="form-group margin-top-large">
 							<label>Spínaný výkon (W)</label>
-							<input type="number" ng-model="device.max_consumption" class="form-control">
+							<input type="number" ng-model="device.max_consumption" class="form-control" style="width:auto;">
+						</div>
+						<div class="form-group">
+							<label>Typ spínání</label>
+							<div>
+								<label class="radio-inline"><input type="radio" ng-model="device.is_linear" ng-value="0"><span class="label label-success label-bigger ">⎍</span> zapnuto/vypnuto </label>
+								<label class="radio-inline"><input type="radio" ng-model="device.is_linear" ng-value="1"><span class="label label-info label-bigger ">∿</span> plynulé </label>
+							</div>
+							<p class="text-success margin-top-medium" ng-if="device.is_linear == 0">
+								Zařízení je spínáno přes relé, tedy pouze ve dvou stavech (vypnuto/zapnuto).
+							</p>
+							<p class="text-info margin-top-medium" ng-if="device.is_linear == 1">
+								Zařízení je plynule regulováno přes triak v rozsahu 0 - 100%. 
+							</p>
 						</div>
 					</div>
 				</div>
