@@ -1,0 +1,11 @@
+<div class="weather">
+    <span ng-repeat="date in dates.data" class="weather-date"
+    ng-class="{ 'night': is_night(date.to)}">
+    <!-- {{ date.power }}%<br/> -->
+        <img width="25" 
+             ng-src="{{ 'https://api.met.no/weatherapi/weathericon/1.1/?symbol=' + date.location.symbol.number + '&is_night=' + date.is_night + '&content_type=image/svg%2Bxml' }}"
+             title=""
+        /><br>
+        {{ date.to | date:"H"}}h
+    </span>
+</div>

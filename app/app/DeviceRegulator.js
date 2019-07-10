@@ -43,8 +43,15 @@ var DeviceRegulator = function () {
 				} else {
 					regulator = RelayRegulator;
 				}
-				regulator.setElmer(elmer);
-				regulator.regulate(device);
+				if (!device.priority || device.priority == 1) {
+					regulator.setElmer(elmer);
+					regulator.regulate(device);
+				} else {
+					setTimeout(function () {
+						regulator.setElmer(Elmer.get());
+						regulator.regulate(device);
+					}, device.priority * 100);
+				}
 			});
 		}
 	}

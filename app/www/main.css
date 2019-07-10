@@ -250,3 +250,23 @@ height: 14px;
     from { -webkit-transform: rotate(0deg); }
     to { -webkit-transform: rotate(360deg); }
 }
+
+weather .night {
+	background:rgba(0, 0, 0, 0.2);
+}
+
+weather .weather-date {
+	display:inline-block;
+	padding:1px;
+	margin-left:3px;
+	margin-right:3px;
+	border-radius:8px;
+	border:1px solid #ececec;
+	font-size:smaller;
+}
+
+weather .weather {
+	float:left;
+	margin:3px;
+	text-align: center;
+}

@@ -6,7 +6,16 @@
 	<div class="phases-container">
 		<div ng-repeat="phase in [1,2,3]" class="phase col-md-4 clearfix" ng-class="'phase' + phase">
 			<h4 title="L{{ phase }}" ng-class="{ 'text-danger': main.elmer['p' + phase] < -1000, 'text-warning': main.elmer['p' + phase] > -1000 && main.elmer['p' + phase] < -200, 'text-primary': main.elmer['p' + phase] >= -200 && main.elmer['p' + phase] < -50, 'text-success': main.elmer['p' + phase] >= -50 }">{{ main.elmer['p' + phase] }} W</h4>
-			<div ng-repeat="item in devices track by item.address" ng-if="item.phase == phase" device="item"></div>
+			<div xdnd-list>
+				<div
+					ng-repeat="item in devices track by item.address" 
+					ng-if="item.phase == phase" 
+					xdnd-draggable="item"
+            		xdnd-effect-allowed="move"
+            		xdnd-moved="updatePriority(item, $index)"
+		            xdnd-selected="devices.selected = item"
+					device="item"></div>
+			</div>
 		</div>
 	</div>
 </div>

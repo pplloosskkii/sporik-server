@@ -29,10 +29,10 @@ sporikApp.directive('deviceStats', ['Devices', function(Devices) {
 
 					scope.all = [ 
 						stats.data.map(function (item) {
-							return item.day_total
+							return item.day_total;
 						}),
 						stats.data.map(function (item) {
-							return item.total
+							return item.total;
 						}),
 					]
 
@@ -40,7 +40,7 @@ sporikApp.directive('deviceStats', ['Devices', function(Devices) {
 
 					scope.labels = stats.data.map(function (item) {
 						var date = new Date(item.max_date);
-						var ret = date.getDate() + "." + (date.getMonth()) + "." + date.getFullYear();
+						var ret = date.toLocaleDateString(); //date.getDate() + "." + (date.getMonth()) + "." + date.getFullYear();
 						console.log("input:",item.max_date, "date:",date, "ret",ret);
 						return ret;
 					})

@@ -15,7 +15,7 @@ var DeviceList = function (mqttWrapper) {
 	var devices = new Dictionary();
 	var mqttRegister = function (address) {
 		DEBUG.log("MQTT REGISTER", address);
-		mqttWrapper.publish('sporik/register', '{"address": "' + address + '"}');
+		mqttWrapper.publish('sporik/register', '{"address":"' + address + '"}');
 	}
 
 	return {

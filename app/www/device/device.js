@@ -1,4 +1,5 @@
-sporikApp.directive('device', ['AppConfig', '$timeout', 'Devices', 'ModalService', function(AppConfig, $timeout, Devices, ModalService) {
+sporikApp.directive('device', ['AppConfig', '$timeout', 'Devices', 'ModalService', '$cookies',
+ function(AppConfig, $timeout, Devices, ModalService, $cookies) {
 	return {
 		restrict: 'A',
 		replace:false,
@@ -11,6 +12,9 @@ sporikApp.directive('device', ['AppConfig', '$timeout', 'Devices', 'ModalService
 			scope.loading = { 
 				'toggleOnOff': false,
 				'toggleAutorun': false,
+			};
+			scope.userSettings = {
+				'display': ($cookies.get("sporik-setting-display-" + scope.device.alias) == 1 ? 'small' : 'full')
 			};
 			var settingsScope = scope.$new();
 
@@ -141,6 +145,12 @@ sporikApp.directive('device', ['AppConfig', '$timeout', 'Devices', 'ModalService
 				});
 			};
 
+
+			scope.setDisplayMode = function (mode) {
+				scope.userSettings.display = mode;
+				console.log(mode)
+				$cookies.put("sporik-setting-display-" + scope.device.alias, (mode == 'full' ? 0 : 1));
+			};
 		}
 	}
 }]);

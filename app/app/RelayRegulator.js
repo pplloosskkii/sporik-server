@@ -8,6 +8,13 @@ var RelayRegulator = function () {
 	var lastValues;
 	var ticks = 0;
 
+	function powerDown(arg1, arg2) {
+
+	}
+
+	function powerUp(arg1, arg2) {
+		
+	}
 
 	function regulate(device) {
 		deviceData = device.get();

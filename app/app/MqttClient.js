@@ -1,12 +1,13 @@
 var Elmer = require('./Elmer')();
-var DeviceRegulator = require('./DeviceRegulator')();
+var DeviceRegulator = require('./DeviceRegulator2')();
 var DEBUG = require('./Debug');
 var firstMeasurement = null; // first elmer measurement is remembered
 
 // parse incoming message to json
 function parseMessage(message) {
-	var ret = {};
+	var ret = false;
 	try {
+		//console.log("parsing", message);
 		ret = JSON.parse(message.toString().trim());
 	} catch (e) {
 		DEBUG.error("parseMesage error", e);
@@ -24,6 +25,7 @@ function initialize(client, devices) {
 
 	client.on('message', function (topic, message) {
 		var msg = parseMessage(message);
+		if (!msg) return;
 		DEBUG.log('->', topic, ' (', msg.address, ')');
 		
 		if (topic === 'sporik/elmer') {

@@ -41,7 +41,7 @@ app.use(function (req, res, next) {
 
 console.log('Sporik Server Initting...');
 
-app.get('/api/devices',function(req, res){
+app.get('/api/devices', function(req, res){
 	ret = [];
 	devices.list().forEach(function(key, device) {
 		if (typeof device == 'undefined' || typeof device.isAlive != 'function' || !device.isAlive()) {
@@ -54,10 +54,15 @@ app.get('/api/devices',function(req, res){
 			ret.push(device.get());
 		}
 	});
+	ret.sort(function (a, b) {
+		if (a.priority >= 0 && b.priority >= 0 && a.priority < b.priority) return -1;
+		if (a.priority >= 0 && b.priority >= 0 && a.priority > b.priority) return 1;
+		return 0;
+	});
 	res.json({"devices": ret});
 });
 
-app.get('/api/devices/:id',function(req,res){
+app.get('/api/devices/:id', function(req,res){
 	var ret = devices.list().get(req.params.id);
 	if (typeof ret == 'undefined') {
 		return res.status(404).json({ ok: false, reason: "404 Not Found" });
@@ -66,7 +71,7 @@ app.get('/api/devices/:id',function(req,res){
 });
 
 
-app.put('/api/devices/:id/autorun/:value/:maximum',function(req,res){
+app.put('/api/devices/:id/autorun/:value/:maximum', function(req,res){
 	var ret = devices.list().get(req.params.id);
 	if (typeof ret == 'undefined') {
 		return res.status(404).json({ ok: false, reason: "404 Not Found" });
@@ -89,14 +94,14 @@ app.post('/api/devices/:id',function(req,res){
 // toggle on/off
 app.put('/api/devices/:id/toggle',function(req,res){
 	DEBUG && console.log('got toggle command for id', req.params.id);
-	mqttWrapper.publish('sporik/toggle', '{"address": "' + req.params.id + '"}');
+	mqttWrapper.publish('sporik/toggle', '{"address":"' + req.params.id + '"}');
 	res.json({"ok":true});
 });
 
 // set regulation value
 app.put('/api/devices/:id/regulate/:value',function(req,res){
 	DEBUG && console.log('got regulate command for id', req.params.id, 'value', req.params.value);
-	mqttWrapper.publish('sporik/regulate', '{"address": "' + req.params.id + '", "value": ' + req.params.value + '}');
+	mqttWrapper.publish('sporik/regulate', '{"address":"' + req.params.id + '","value":' + req.params.value + '}');
 	res.json({"ok":true});
 });
 

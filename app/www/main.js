@@ -1,5 +1,5 @@
 
-var sporikApp = angular.module('sporikApp', ['chart.js','angularModalService', 'objValueFilter']);
+var sporikApp = angular.module('sporikApp', ['chart.js','angularModalService', 'objValueFilter', 'ngCookies', 'dndLists']);
 
 angular.module('objValueFilter',[])
 .filter('objVal', function() {

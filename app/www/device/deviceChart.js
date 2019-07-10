@@ -9,14 +9,16 @@ sporikApp.directive('deviceChart', ['$timeout', function($timeout) {
       scope.all = [[]];
       scope.labels = [];
       scope.options = {
-        events: ['click'],
+        //events: ['click'],
         animation: {
           duration: 0
         },
         scales: {
             yAxes: [{
                 ticks: {
-                    beginAtZero:true
+                    beginAtZero:true,
+                    stepsize:10,
+                    max:scope.data.max_consumption
                 }
             }]
         }
@@ -26,7 +28,7 @@ sporikApp.directive('deviceChart', ['$timeout', function($timeout) {
 
 
       scope.go = function () {
-        scope.all[0].unshift(scope.data);
+        scope.all[0].unshift(scope.data.measurement_recount);
         scope.labels.unshift('');
 
         if (scope.all[0].length > 20) {
