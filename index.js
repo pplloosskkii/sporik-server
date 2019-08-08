@@ -6,7 +6,8 @@
 
 // EXPRESS
 var app = require('express')();
-var http = require('http').Server(app);
+var http = require('http');
+var server = require('http').Server(app);
 var bodyParser = require("body-parser");
 
 // MQTT AND STUFF
@@ -50,9 +51,9 @@ app.get('/api/devices', function(req, res){
 			devices.unregister(key);
 			return;
 		}
-		if (device.isAlive()) {
-			ret.push(device.get());
-		}
+		//if (device.isAlive() || device.hasError()) {
+		ret.push(device.get());
+		//}
 	});
 	ret.sort(function (a, b) {
 		if (a.priority >= 0 && b.priority >= 0 && a.priority < b.priority) return -1;
@@ -118,9 +119,36 @@ app.get('/api/elmer',function(req,res){
 	res.json(Elmer.get());
 });
 
+app.get('/api/elmer/stats',function(req,res){
+	db.stats.fetchWeeklyElmerStats(function (data) {
+		res.json(data);
+	});
+});
+
 // kill server
 app.get('/api/restart',function(req,res){
 	process.exit();
+});
+
+app.get('/api/inverter', function (req, res) {
+	http.get('http://192.168.1.180/solar_api/v1/GetPowerFlowRealtimeData.fcgi', function (getres) {
+		var contentType = getres.headers['content-type'];
+	  
+		getres.setEncoding('utf8');
+		var rawData = '';
+		getres.on('data', function (chunk) { rawData += chunk; });
+		getres.on('end', function () {
+		  try {
+			var parsedData = JSON.parse(rawData);
+			res.json(parsedData);
+		  } catch (e) {
+			console.error(e.message);
+			res.json({ error: true, message: e.message });
+		  }
+		});
+	  }).on('error', function (e) {
+		res.json({ error: true });
+	  });
 });
 
 
@@ -134,6 +162,6 @@ var flushDailyStats = schedule.scheduleJob('1 0 * * *', function(){
 
 
 // Start and initialize the node server on local host port
-http.listen(9009,function(){
+server.listen(9009,function(){
 	console.log("HTTP Server ready.");
 });

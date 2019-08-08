@@ -7,7 +7,7 @@ var single;
 
 var DeviceRegulator = function () {
 	var data = {
-        stafeta: [0, 0, 0, 0]
+        stafeta: [null, 0, 0, 0]
     };
 
 	return {
@@ -67,6 +67,14 @@ var DeviceRegulator = function () {
                 reg.setElmer(elmer);
                 var overflow = elmer['overflow'][dd.phase - 1];
                 var	elmerReading = (elmer['P' + dd.phase + 'A+'] / 10) || 0;
+                if (data.stafeta[dd.phase] == index) {
+                    device.setActiveState(true);
+                } else {
+                    device.setActiveState(false);
+                    if (data.stafeta[dd.phase] > arr.length && data.stafeta[dd.phase] > 0) {
+                        data.stafeta[dd.phase]--;
+                    }
+                }
                 if (arr.length == 1) {
                     // phase has only one device 
                     reg.regulate(device);
@@ -77,7 +85,11 @@ var DeviceRegulator = function () {
                     if (data.stafeta[dd.phase] == 0 && index == 0) {
                         // jsem prvni a mam stafetu
                         if (overflow && dd.regulation == 100) {
-                            data.stafeta[dd.phase]++;
+                            if (data.stafeta[dd.phase] < (arr.length - 1)) {
+                                data.stafeta[dd.phase]++;
+                            } else {
+                                // there are no more devices!!!
+                            }
                         } else {
                             reg.regulate(device);
                         }
@@ -86,10 +98,14 @@ var DeviceRegulator = function () {
                         // jsem jakykoliv dalsi a mam stafetu
                         if (overflow) {
                             if (dd.regulation == 100) {
-                                data.stafeta[dd.phase]++;
+                                if (data.stafeta[dd.phase] < (arr.length - 1)) {
+                                    data.stafeta[dd.phase]++;
+                                } else {
+                                    // there is no more devices!!!
+                                }
                             } 
                         } else {
-                            if (dd.regulation == 0) {
+                            if (dd.regulation == 0 && data.stafeta[dd.phase] > 0) {
                                 data.stafeta[dd.phase]--;
                             }
                         }

@@ -11,6 +11,7 @@ sporikApp.constant('AppConfig', {
 		aboutModal: './app/www/about/about.html'
 	},
 	apiUrl: "http://192.168.1.246:9009/api",
+	inverterUrl: "http://192.168.1.246:9009/api/inverter",
 	location: {
 		lat:50.226898,
 		lon:14.156712

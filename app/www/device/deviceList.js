@@ -3,7 +3,7 @@ sporikApp.directive('deviceList', ['Devices', '$timeout', '$rootScope', function
     restrict: 'A',
     templateUrl: './app/www/device/deviceList.html',
     link: function(scope, element, attrs) {
-
+      var timeout = null;
     	var fetchDevices = function () {
         scope.loading = true;
     		Devices.list().then(function (data) {
@@ -11,18 +11,19 @@ sporikApp.directive('deviceList', ['Devices', '$timeout', '$rootScope', function
             return a.phase > b.phase;
           });
           scope.loading = false;
-  				$timeout(fetchDevices, 2500);
+  				timeout = $timeout(fetchDevices, 2500);
   			}, function (err) {
           // retry in 10s
-          $timeout(fetchDevices, 10000);
+          timeout = $timeout(fetchDevices, 10000);
         });
     	}
 
     	fetchDevices();
 
-        $rootScope.$on('reloadDevices', function () {
-            fetchDevices();
-        })
+      $rootScope.$on('reloadDevices', function () {
+          $timeout.cancel(timeout);
+          fetchDevices();
+      })
 	},
 
   }

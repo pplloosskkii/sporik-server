@@ -2,7 +2,7 @@ sporikApp.factory('Devices', ['$http', '$q', '$timeout', 'AppConfig', function (
 	return {
 		list: function () {
 			var deferred = $q.defer();
-			$http.get(AppConfig.apiUrl + '/devices').then(function(data, status, headers, config) {
+			$http.get(AppConfig.apiUrl + '/devices', { timeout: 3000 }).then(function(data, status, headers, config) {
 				data.data.devices.sort(function (a,b) {
 					if (a.priority >= 0 && b.priority >= 0 && a.priority < b.priority) return -1;
 					if (a.priority >= 0 && b.priority >= 0 && a.priority > b.priority) return 1;

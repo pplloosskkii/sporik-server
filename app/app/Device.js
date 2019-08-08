@@ -2,6 +2,13 @@ var DeviceDb = require('./DeviceDb')();
 var mqttWrapper = require("./MqttWrapper")();
 var DEBUG = require('./Debug');
 
+var ERROR_CODES = [
+	'OK',
+	'BOOT',
+	'ZX_TIMEOUT',
+	'OTHER'
+];
+
 var Device = function (param) {  
 	var obj = {
 		address: null, 
@@ -19,6 +26,9 @@ var Device = function (param) {
 		is_linear:null,
 		priority: null,
 	};
+	var is_regulating = false;
+	var error = null;
+	
 	var measurements = {
 		regulation: 0,
 		voltage: 0,
@@ -58,9 +68,19 @@ var Device = function (param) {
 			for (var i in obj) {
 				newObj[i] = obj[i];
 			}
+			newObj.regulation = parseInt(newObj.regulation);
 			newObj.measurement_recount = this.recount(obj.max_consumption, obj.regulation);
 			newObj.measurements = measurements;
-			newObj.stats = { short: shortStats, long: stats }
+			newObj.stats = { short: shortStats, long: stats };
+			newObj.is_regulating = is_regulating;
+			if (this.hasError()) {
+				newObj.error = error;
+			}
+			if (this.isAlive()) {
+				newObj.alive = true;
+			} else {
+				newObj.alive = false;
+			}
 			return newObj;
 		},
 		recount: function (max_consumption, regulation) {
@@ -105,7 +125,21 @@ var Device = function (param) {
 		toString: function () {
 			return "Device: " + obj.address + " (" + obj.alias + ") - " + obj.description;
 		},
-
+		setActiveState: function (activeState) {
+			is_regulating = activeState;
+		},
+		setError: function (errorCode) {
+			error = {
+				code: errorCode,
+				type: ERROR_CODES[errorCode]
+			};
+			setTimeout(function () { 
+				error = null;
+			}, 30000);
+		},
+		hasError: function () {
+			return (error === null ? false : true);
+		},
 		// 1 kWh = 3 600 000 Ws
 		recountEnergy: function () {
 			stats.wattsTotal += this.get().measurement_recount;

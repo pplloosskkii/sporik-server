@@ -17,7 +17,8 @@ body {
 	border-radius: 0px;
 }
 .panel-chart {
-	border:0;
+	border: 1px solid #ddd;
+	border-top:0;
 	padding:20px;
 	padding-bottom:0;
 }
@@ -191,7 +192,10 @@ height: 14px;
 }
 
 
-
+.margin-large { margin:20px; }
+.margin-medium { margin:10px; }
+.margin-small { margin:5px; }
+.margin-none { margin:0px; }
 
 .margin-top-large { margin-top:20px; }
 .margin-top-medium { margin-top:10px; }
@@ -213,6 +217,10 @@ height: 14px;
 .margin-right-small { margin-right:5px; }
 .margin-right-none { margin-right:0px; }
 
+.padding-large { padding:20px; }
+.padding-medium { padding:10px; }
+.padding-small { padding:5px; }
+.padding-none { padding:0px; }
 
 .padding-top-large { padding-top:20px; }
 .padding-top-medium { padding-top:10px; }

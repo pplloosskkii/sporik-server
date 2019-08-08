@@ -15,11 +15,107 @@
     </head>
     <body ng-app="sporikApp" ng-controller="sporikDashboard as main">
         <sporik-navigation></sporik-navigation>
-        <div class="container">
-            <div class="col-md-12 margin-top-medium margin-bottom-large panel panel-chart" ng-show="main.showElmerGraph" >
-                <div class="text-center" ng-show="!main.elmer.ok"><span class="glyphicon glyphicon-refresh spinning"></span> Načítám graf</div>
-                <elmer-chart data="main.elmer" width="1100" height="120" columns="180" colors="['#603803', '#000000', '#aaaaaa']"></elmer-chart>
-            </div>
+        <div class="container"> 
+                <ul class="nav nav-tabs" role="tablist">
+                    <li role="presentation" class="active">
+                        <a href="#elmer" aria-controls="elmer" role="tab" data-toggle="tab" style="min-width:120px;">
+                            Elměr
+                            <span ng-if="main.elmer.ok">({{ main.elmer.p1 + main.elmer.p2 + main.elmer.p3 }} W)</span>
+                        </a>
+                    </li>
+                    <li role="presentation">
+                        <a href="#inverter" aria-controls="inverter" role="tab" data-toggle="tab" style="min-width:120px;">
+                            Inverter 
+                            <span ng-if="main.inverter.data.Body.Data">({{ main.inverter.data.Body.Data.Inverters[1]['P'] }} W)</span>
+                        </a>
+                    </li>
+                    <li role="presentation">
+                        <a href="#stats" aria-controls="stats" role="tab" data-toggle="tab" style="min-width:120px;">
+                            Statistiky
+                        </a>
+                    </li>
+                </ul>
+                    
+                <!-- Tab panes -->
+                <div class="tab-content">
+                    <div role="tabpanel" class="tab-pane active" id="elmer">
+                        <div class="col-md-12 col-sm-12 margin-bottom-large panel panel-chart">
+                            <div class="text-center" ng-show="!main.elmer.ok"><span class="glyphicon glyphicon-refresh spinning"></span> Načítám graf</div>
+                            <elmer-chart data="main.elmer" width="1100" height="120" columns="180" colors="['#603803', '#000000', '#aaaaaa']"></elmer-chart>
+                        </div>
+                    </div>
+                    <div role="tabpanel" class="tab-pane" id="inverter">
+                        <div class="col-md-12 col-sm-12 margin-bottom-large panel panel-chart">
+                            <div class="text-center" ng-show="!main.inverter.ok"><span class="glyphicon glyphicon-refresh spinning"></span> Načítám graf</div>
+                            <inverter-chart data="main.inverter" width="1100" height="120" columns="180"></inverter-chart>
+                            <div>
+                                <label>
+                                    Dnes: <span class="label label-primary">{{ main.inverter.data.Body.Data.Inverters[1]['E_Day'] / 1000 }} kWh</span>
+                                </label>
+                                <label>
+                                    Za rok: <span class="label label-primary">{{ main.inverter.data.Body.Data.Inverters[1]['E_Year'] / 1000 }} kWh</span>
+                                    </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div role="tabpanel" class="tab-pane" id="stats">
+                        <div class="col-md-12 col-sm-12 margin-bottom-large panel panel-chart">
+                            <table class="table">
+                                <tr>
+                                    <th> </th>
+                                    <th>L1</th>
+                                    <th>L2</th>
+                                    <th>L3</th>
+                                    <th>Celkem</th>
+                                </tr>
+
+                                <tr>
+                                    <td>Přetok dnes</td>
+                                    <td>{{ main.elmerStats.l1.overflowToday | number }} kWh</td>
+                                    <td>{{ main.elmerStats.l2.overflowToday | number }} kWh</td>
+                                    <td>{{ main.elmerStats.l3.overflowToday | number }} kWh</td>
+                                    <td><b>{{ main.elmerStats.sumOverflowToday | number }} kWh</b></td>
+                                </tr>
+                                <tr>
+                                    <td>Přetok včera</td>
+                                    <td>{{ main.elmerStats.l1.overflowYesterday | number }} kWh</td>
+                                    <td>{{ main.elmerStats.l2.overflowYesterday | number }} kWh</td>
+                                    <td>{{ main.elmerStats.l3.overflowYesterday | number }} kWh</td>
+                                    <td><b>{{ main.elmerStats.sumOverflowYesterday | number }} kWh</b></td>
+                                </tr>
+                                <tr>
+                                    <td>Přetok za posledních 7 dní</td>
+                                    <td>{{ main.elmerStats.l1.overflowWeek | number }} kWh</td>
+                                    <td>{{ main.elmerStats.l2.overflowWeek | number }} kWh</td>
+                                    <td>{{ main.elmerStats.l3.overflowWeek | number }} kWh</td>
+                                    <td>{{ main.elmerStats.sumOverflowWeek | number }} kWh</td>
+                                </tr>
+                                <tr>
+                                    <td>Spotřeba dnes</td>
+                                    <td>{{ main.elmerStats.l1.consumeToday | number }} kWh</td>
+                                    <td>{{ main.elmerStats.l2.consumeToday | number }} kWh</td>
+                                    <td>{{ main.elmerStats.l3.consumeToday | number }} kWh</td>
+                                    <td><b>{{ main.elmerStats.sumConsumeToday | number }} kWh</b></td>
+                                </tr>
+                                <tr>
+                                    <td>Spotřeba včera</td>
+                                    <td>{{ main.elmerStats.l1.consumeYesterday | number }} kWh</td>
+                                    <td>{{ main.elmerStats.l2.consumeYesterday | number }} kWh</td>
+                                    <td>{{ main.elmerStats.l3.consumeYesterday | number }} kWh</td>
+                                    <td><b>{{ main.elmerStats.sumConsumeYesterday | number }} kWh</b></td>
+                                </tr>
+                                <tr>
+                                    <td>Spotřeba za posledních 7 dní</td>
+                                    <td>{{ main.elmerStats.l1.consumeWeek | number }} kWh</td>
+                                    <td>{{ main.elmerStats.l2.consumeWeek | number }} kWh</td>
+                                    <td>{{ main.elmerStats.l3.consumeWeek | number }} kWh</td>
+                                    <td>{{ main.elmerStats.sumConsumeWeek | number }} kWh</td>
+                                </tr>                                
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                    
 
             <div class="row" ng-cloak id="content" device-list></div>
         </div>
@@ -47,5 +143,8 @@
     <script src="./app/www/device/deviceChart.js"></script>
     <script src="./app/www/device/deviceStats.js"></script>
     <script src="./app/www/weather/weather.js"></script>
+    <script src="./app/www/inverter/Inverter.js"></script>
+    <script src="./app/www/inverter/InverterChart.js"></script>
+
     <script src="./app/www/DashboardCtrl.js"></script>
 </html>

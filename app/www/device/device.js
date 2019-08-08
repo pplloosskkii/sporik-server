@@ -8,7 +8,7 @@ sporikApp.directive('device', ['AppConfig', '$timeout', 'Devices', 'ModalService
 		},
 		templateUrl: AppConfig.templates.device,
 		link: function(scope, element, attrs) {
-			scope.device.regulation = scope.device.regulation || 0;
+			scope.device.regulation = parseInt(scope.device.regulation) || 0;
 			scope.loading = { 
 				'toggleOnOff': false,
 				'toggleAutorun': false,
@@ -19,11 +19,11 @@ sporikApp.directive('device', ['AppConfig', '$timeout', 'Devices', 'ModalService
 			var settingsScope = scope.$new();
 
 			scope.regulate = function () {
-				Devices.regulate(scope.device.address, scope.device.regulation).then(function (data) {
+				Devices.regulate(scope.device.address, parseInt(scope.device.regulation)).then(function (data) {
 				});
 			};
 			scope.isOn = function () {
-				return (scope.device.regulation > 0);
+				return (parseInt(scope.device.regulation) > 0);
 			};
 
 			scope.setAutorun = function (autorun_value) {

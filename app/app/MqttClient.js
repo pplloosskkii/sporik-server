@@ -47,6 +47,12 @@ function initialize(client, devices) {
 			});
 		}
 
+		if (topic === 'sporik/error') {
+			devices.get(msg.address).then(function (device) {
+				device.setError(msg.error);
+			});
+		}
+
 		if (topic === 'sporik/triac-value') {
 			devices.get(msg.address).then(function (device) {
 				device.updateSingle({'regulation': msg.value });

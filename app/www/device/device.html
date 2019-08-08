@@ -1,8 +1,10 @@
-<div class="panel panel-default device" ng-class="{ 'panel-success': isAutorun(), 'panel-primary': !isAutorun() && device.regulation == 100 }">
+<div class="panel panel-default device" ng-class="{ 'panel-success': !device.error && isAutorun() && device.regulation > 0 , 'panel-primary': !device.error && !isAutorun() && device.regulation == 100, 'panel-inactive': !device.error && !isAutorun() && !device.regulation, 'panel-danger': device.error }">
 	<div class="panel-heading">
-		<div class="pull-left label bigger" ng-class="{ 'label-success': device.autorun, 'label-info': !device.autorun }" title="Okamžitý výkon">
+		<div class="pull-left label bigger" ng-class="{ 'label-success': !device.error && device.autorun, 'label-info': !device.error && !device.autorun, 'label-danger': device.error }" title="Okamžitý výkon">
 			<!-- <span ng-show="device.measurement < 100">{{ device.measurement }}&nbsp;A</span> -->
-			<span>{{ device.measurement_recount }}&nbsp;W</span>
+			<span ng-show="device.measurement_recount > 0">{{ device.measurement_recount }}&nbsp;W</span>
+			<span ng-show="device.measurement_recount == 0 && device.error">{{ device.error.type }}</span>
+			<span ng-show="device.measurement_recount == 0 && !device.error">OFF</span>
 		</div>
 		<div class="pull-left label bigger margin-left-small label-warning" title="Celková energie" ng-if="device.stats.long.kWh > 0">
 			{{ device.stats.long.kWh | number:2 }}&nbsp;kWh
@@ -15,11 +17,11 @@
 
 		<h4 class="panel-title" title="{{ device.description }}">
 			
-			<a href="" ng-click="setDisplayMode((userSettings.display == 'full' ? 'small' : 'full'))"><label>{{ device.alias }}</label></a>
+			<a href="" ng-click="setDisplayMode((userSettings.display == 'full' ? 'small' : 'full'))"><label><i ng-if="device.is_regulating" class="fa fa-dot-circle-o" title="Toto zařízení má štafetu"></i> {{ device.alias }}</label></a>
 		</h4>
 	</div>
-		<div class="panel-body" ng-if="userSettings.display == 'full'">
-		<span style="position:absolute; right:8%;"><input type="checkbox" ng-model="device.autorun" value="1" ng-true-value="1" ng-false-value="0" ng-change="saveDevice()"></span>
+		<div class="panel-body" ng-if="userSettings.display == 'full' && !device.error">
+		<span style="position:absolute; right:8%;"><input type="checkbox" ng-model="device.autorun" value="1" ng-true-value="1" ng-false-value="0" ng-change="saveDevice()" title="Zapnout/vypnout automatickou regulaci"></span>
 		<device-chart data="device"></device-chart>
 		<div class="range-container" ng-if="device.is_linear === 1">
 			<span class="font-smaller left">0&nbsp;W</span>

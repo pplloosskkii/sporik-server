@@ -7,7 +7,7 @@ sporikApp.factory('Elmer', ['$http', '$q', '$timeout', 'AppConfig', function ($h
 
 		get: function () {
 			var deferred = $q.defer();
-			$http.get(AppConfig.apiUrl + '/elmer').then(function(data, status, headers, config) {
+			$http.get(AppConfig.apiUrl + '/elmer', { timeout: 3000 }).then(function(data, status, headers, config) {
 				this.data.ok = true;
 				deferred.resolve(data);
 			}.bind(this), deferred.reject);
@@ -19,6 +19,14 @@ sporikApp.factory('Elmer', ['$http', '$q', '$timeout', 'AppConfig', function ($h
 			obj.data.o2 = data.data['overflow'][1] || 0;
 			obj.data.o3 = data.data['overflow'][2] || 0;
 
+			obj.data.tp1 = data.data['P1S-'];
+			obj.data.tp2 = data.data['P2S-'];
+			obj.data.tp3 = data.data['P3S-'];
+
+			obj.data.tc1 = data.data['P1S+'];
+			obj.data.tc2 = data.data['P2S+'];
+			obj.data.tc3 = data.data['P3S+'];
+
 			obj.data.p1 = Math.round((obj.data.o1 > 0 ? '+' : '-') + "" + (data.data['P1A+'] / 10));
 			obj.data.p2 = Math.round((obj.data.o2 > 0 ? '+' : '-') + "" + (data.data['P2A+'] / 10));
 			obj.data.p3 = Math.round((obj.data.o3 > 0 ? '+' : '-') + "" + (data.data['P3A+'] / 10));
@@ -28,6 +36,14 @@ sporikApp.factory('Elmer', ['$http', '$q', '$timeout', 'AppConfig', function ($h
 
 		getValues: function () {
 			return this.data;
+		},
+
+		getDailyData: function () {
+			var deferred = $q.defer();
+			$http.get(AppConfig.apiUrl + '/elmer/stats', { timeout: 3000 }).then(function(data, status, headers, config) {
+				deferred.resolve(data.data);
+			}.bind(this), deferred.reject);
+			return deferred.promise;
 		},
 
 		process: function (callback) {

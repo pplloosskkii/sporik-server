@@ -76,7 +76,14 @@ var DeviceDb = function () {
 					if (err) throw new Error(err);
 		  			cb && cb(result);
 				});
-			}
+			},
+			fetchWeeklyElmerStats: function (cb) {
+				connection.query('SELECT q.created_at, q.l1s, q.l2s, q.l3s, q.l1p, q.l2p, q.l3p  \
+					FROM stats q WHERE q.created_at > NOW() - interval 1 week ORDER BY q.created_at', function(err, result) {
+					if (err) throw new Error(err);
+		  			cb && cb(result);
+				});
+			},	
 		},
 		weather: {
 			insert: function (data, cb) {

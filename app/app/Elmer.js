@@ -22,7 +22,7 @@ var Elmer = function () {
 		},
 		flushDailyStats: function () {
 			DeviceDb.stats.insertElmerSum({ l1s: data['P1S+'], l2s: data['P2S+'], l3s: data['P3S+'], l1p: data['P1S-'], l2p: data['P2S-'], l3p: data['P3S-'] });
-		},
+		}
 	}
 }
 
