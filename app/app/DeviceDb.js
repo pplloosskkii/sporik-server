@@ -21,6 +21,7 @@ var DeviceDb = function () {
 					'max_consumption': device.max_consumption,
 					'is_registered': device.is_registered,
 					'autorun_max': device.autorun_max,
+					'max_regulation': device.max_regulation
 				};
 				var query = connection.query('INSERT INTO devices SET ? ON DUPLICATE KEY UPDATE devices.address=devices.address;', insert, function(err, result) {
 					if (err) throw new Error(err);

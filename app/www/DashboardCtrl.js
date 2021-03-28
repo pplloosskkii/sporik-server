@@ -1,6 +1,7 @@
-sporikApp.controller('sporikDashboard', ['Devices', 'Elmer', 'Inverter', '$interval', '$timeout', function(Devices, Elmer, Inverter, $interval, $timeout) {
+sporikApp.controller('sporikDashboard', ['Devices', 'Elmer', 'Elmer2', 'Inverter', '$interval', '$timeout', function(Devices, Elmer, Elmer2, Inverter, $interval, $timeout) {
 	var $scope = this;
 	$scope.elmer = { ok: false };
+	$scope.elmer2 = { ok: false };
 	$scope.showElmerGraph = true;
 	$scope.elmerStats = { l1: { }, l2: {}, l3: {}};
 
@@ -8,6 +9,9 @@ sporikApp.controller('sporikDashboard', ['Devices', 'Elmer', 'Inverter', '$inter
 	var processElmer = function() {
 		Elmer.process(function (data) {
 			$scope.elmer = angular.copy(data);
+		});
+		Elmer2.process(function (data) {
+			$scope.elmer2 = angular.copy(data);
 		});
 	}
 	
@@ -17,7 +21,7 @@ sporikApp.controller('sporikDashboard', ['Devices', 'Elmer', 'Inverter', '$inter
 			
 			for (var i = 1; i <= 3; i++) {
 				$scope.elmerStats["l" + i].overflowToday = ($scope.elmer['tp' + i] - arr[arr.length - 1]["l" + i + "p"]) / 10000;
-				$scope.elmerStats["l" + i].overflowYesterday = (arr[arr.length - 1]["l" + i + "s"] - arr[arr.length - 2]["l" + i + "p"]) / 10000;
+				$scope.elmerStats["l" + i].overflowYesterday = (arr[arr.length - 1]["l" + i + "p"] - arr[arr.length - 2]["l" + i + "p"]) / 10000;
 				$scope.elmerStats["l" + i].overflowWeek = ($scope.elmer['tp' + i] - arr[0]["l" + i + "p"]) / 10000;
 
 				$scope.elmerStats["l" + i].consumeToday = ($scope.elmer['tc' + i] - arr[arr.length - 1]["l" + i + "s"]) / 10000;

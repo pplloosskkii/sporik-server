@@ -19,6 +19,7 @@ var mqttWrapper = require("./app/app/MqttWrapper")(client);
 var devices = require("./app/app/DeviceList")(mqttWrapper);
 var mqttSporikClient = require("./app/app/MqttClient")(mqttWrapper, devices);
 var Elmer = require('./app/app/Elmer')();
+var Elmer2 = require('./app/app/Elmer2')();
 
 // DATABASE
 var db = require("./app/app/DeviceDb")();
@@ -117,6 +118,10 @@ app.get('/api/devices/:id/stats', function (req, res) {
 // fetch elmer
 app.get('/api/elmer',function(req,res){
 	res.json(Elmer.get());
+});
+
+app.get('/api/elmer2',function(req,res){
+	res.json(Elmer2.get());
 });
 
 app.get('/api/elmer/stats',function(req,res){

@@ -25,6 +25,7 @@ var Device = function (param) {
 		description: null,
 		is_linear:null,
 		priority: null,
+		max_regulation:null, // 0 - 100 % int
 	};
 	var is_regulating = false;
 	var error = null;
@@ -33,9 +34,7 @@ var Device = function (param) {
 		regulation: 0,
 		voltage: 0,
 		current: 0,
-		energy: 0,
-		frequency: 0,
-		is_measured: false
+		temperature: 0,
 	};
 
 	var stats = {
@@ -69,7 +68,14 @@ var Device = function (param) {
 				newObj[i] = obj[i];
 			}
 			newObj.regulation = parseInt(newObj.regulation);
+
+			if (newObj.address.indexOf('nabijecka') > -1) {
+				newObj.deviceType = 'charger';
+			} else {
+				newObj.deviceType = 'sporik';
+			}
 			newObj.measurement_recount = this.recount(obj.max_consumption, obj.regulation);
+
 			newObj.measurements = measurements;
 			newObj.stats = { short: shortStats, long: stats };
 			newObj.is_regulating = is_regulating;
@@ -87,7 +93,7 @@ var Device = function (param) {
 			return Math.max(0, (max_consumption / 100) * regulation);
 		},
 		update: function (newData) {
-			for (var i in {'autorun':0, 'autorun_max':0, 'phase':0, 'alias':0, 'description':0, 'is_linear':0, 'max_consumption':0, 'priority': 0}) {
+			for (var i in {'autorun':0, 'autorun_max':0, 'phase':0, 'alias':0, 'description':0, 'is_linear':0, 'max_consumption':0, 'priority': 0, 'max_regulation': 0}) {
 				obj[i] = newData[i];
 			}
 			DeviceDb.device.update(obj.address, obj);
@@ -159,15 +165,15 @@ var Device = function (param) {
 			stats = { wattsTotal: 0, hits: 0, kWh: 0 };
 		},
 		setMeasurement: function (measurementData) {
-			var tmpMeasure = {
-				'regulation': parseInt(measurementData.r),
-				'voltage': parseFloat(measurementData.v),
-				'current': parseFloat(measurementData.i),
-				'energy': parseInt(measurementData.e),
-				'frequency': parseFloat(measurementData.f),
-				'is_measured': (typeof measurementData.v !== 'undefined' && typeof measurementData.f !== 'undefined')
-			};
-			measurements = tmpMeasure;
+			if (measurementData.volts && measurementData.amps && measurementData.temp) {
+				var tmpMeasure = {
+					'regulation': parseInt(measurementData.r),
+					'voltage': parseFloat(measurementData.volts),
+					'current': parseFloat(measurementData.amps),
+					'temperature': parseInt(measurementData.temp),
+				};
+				measurements = tmpMeasure;
+			}
 		}
 
 	}

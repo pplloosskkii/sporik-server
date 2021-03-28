@@ -12,9 +12,10 @@ var ZeroRegulator = function () {
 	var lastRegulation = [];
 
 	function powerDown(device, powerAvailable) {
+		// deviceData = device.get();
 		var coef = Math.round(powerAvailable / (DEVICE_START_COEFICIENT * 2));
 		var newRegulation = parseInt(deviceData.regulation) + coef;
-		if (newRegulation > 100) newRegulation = 100;
+		if (newRegulation >= deviceData.max_regulation) newRegulation = deviceData.max_regulation;
 		if (newRegulation < 0) {
 			return powerDown(device, powerAvailable / 2)
 		}
@@ -26,9 +27,15 @@ var ZeroRegulator = function () {
 	}
 
 	function powerUp(device, powerAvailable) {
+		// deviceData = device.get();
 		var coef = Math.round(powerAvailable / (DEVICE_START_COEFICIENT * 2));
 		var newRegulation = parseInt(deviceData.regulation) + coef;
-		if (newRegulation > 100) newRegulation = 100;
+		if (newRegulation > deviceData.max_regulation) {
+			if (newRegulation > deviceData.max_regulation + 2) {
+				newRegulation = deviceData.max_regulation;
+			} else return powerUp(device, powerAvailable / 2);
+			//
+		}
 		if (newRegulation < 0)  return powerUp(device, powerAvailable / 2)
 		//device.phase == 2 && DEBUG.log('+++ reg:', deviceData.regulation, 'coef:', coef, 'newreg:', newRegulation);
 		if (lastRegulation[device] != newRegulation) {

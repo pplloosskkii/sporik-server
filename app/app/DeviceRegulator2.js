@@ -84,7 +84,7 @@ var DeviceRegulator = function () {
                     // if first is > 90 and overflow, dont regulate it, regulate second
                     if (data.stafeta[dd.phase] == 0 && index == 0) {
                         // jsem prvni a mam stafetu
-                        if (overflow && dd.regulation == 100) {
+                        if (overflow && dd.regulation >= dd.max_regulation) {
                             if (data.stafeta[dd.phase] < (arr.length - 1)) {
                                 data.stafeta[dd.phase]++;
                             } else {
@@ -97,7 +97,7 @@ var DeviceRegulator = function () {
 
                         // jsem jakykoliv dalsi a mam stafetu
                         if (overflow) {
-                            if (dd.regulation == 100) {
+                            if (dd.regulation >= dd.max_regulation) {
                                 if (data.stafeta[dd.phase] < (arr.length - 1)) {
                                     data.stafeta[dd.phase]++;
                                 } else {
@@ -116,6 +116,9 @@ var DeviceRegulator = function () {
                         if (!overflow && elmerReading) {
                             reg.regulate(device);
                         }
+                    } else if (data.stafeta[dd.phase] > index && overflow) {
+                        // jsem nizsi, nemam stafetu, ale nedoslo na mne
+                        reg.regulate(device);
                     }
                     
                 }

@@ -13,17 +13,22 @@ var LinearRegulator = function () {
 
 
 	function powerDown(device, powerAvailable) {
-		var coef = Math.round(powerAvailable / (DEVICE_START_COEFICIENT*2));
+	//	deviceData = device.get();
+		var coef = Math.round(powerAvailable / (DEVICE_START_COEFICIENT * 4));
 		var newRegulation = parseInt(deviceData.regulation) + coef;
-		if (newRegulation > 100 || newRegulation < 0) return powerDown(device, powerAvailable / 2)
+		if (newRegulation >= deviceData.max_regulation) newRegulation = deviceData.max_regulation; 
+		if (newRegulation < 0) return powerDown(device, powerAvailable / 2)
 		DEBUG.log('--- reg:', deviceData.regulation, 'coef:', coef, 'newreg:', newRegulation);
 		device.updateSingle({'regulation': newRegulation }, true); // force
 	}
 
 	function powerUp(device, powerAvailable) {
-		var coef = Math.round(powerAvailable / (DEVICE_START_COEFICIENT*2));
+	//	deviceData = device.get();
+		var coef = Math.round(powerAvailable / (DEVICE_START_COEFICIENT * 4));
 		var newRegulation = parseInt(deviceData.regulation) + coef;
-		if (newRegulation > 100 || newRegulation < 0)  return powerUp(device, powerAvailable / 2)
+		if (newRegulation >= deviceData.max_regulation) newRegulation = deviceData.max_regulation;
+		if (newRegulation < 0)  return powerUp(device, powerAvailable / 2);
+		// console.log("NEWREG", newRegulation, "MAXREG", deviceData.max_regulation)
 		DEBUG.log('+++ reg:', deviceData.regulation, 'coef:', coef, 'newreg:', newRegulation);
 		device.updateSingle({'regulation': newRegulation }, true); // force publish message
 	}

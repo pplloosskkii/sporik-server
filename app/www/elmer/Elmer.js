@@ -51,5 +51,5 @@ sporikApp.factory('Elmer', ['$http', '$q', '$timeout', 'AppConfig', function ($h
 				this.setValues(data, this, callback);
 			}.bind(this));
 		}
-	};
+    }
 }]);

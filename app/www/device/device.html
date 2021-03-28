@@ -31,6 +31,9 @@
 				/>
 			<span class="font-smaller right" title="Maximální výkon zařízení">{{ device.max_consumption }}&nbsp;W</span>
 		</div>
+		<div class="text-warning text-center" style="margin-top:15px;" ng-if="isAutorun() && device.max_regulation < 100">
+			<i class="fa fa-bolt" style="margin-right:5px;"></i> Zařízení je omezeno na {{device.max_regulation}}% ({{(device.max_consumption * (device.max_regulation/100)) }} W)
+		</div>
 		<div ng-if="!device.is_linear" style="margin:0 auto;">
 			<div class="switch" ng-class="{ 'on': device.regulation == 0, 'off': device.regulation == 100, 'disabled': loading.toggleOnOff }" ng-click="toggleOnOff()">
 				<div class="toggle"></div>
@@ -38,11 +41,11 @@
 				<span class="off">VYPNUTO</span>
 			</div>
 		</div>
-		<div ng-if="device.measurements.is_measured" style="display:flex; justify-content: space-between; margin-top:20px;">
+	
+		<div ng-if="device.measurements && device.measurements.current != ''" style="display:flex; justify-content: space-between; margin-top:20px;">
 				<measurement type="'V'" label="'Napětí'" warning-text="'Bez napětí!'" error-text="'No signal!'" data="device.measurements.voltage"></measurement>
 				<measurement type="'A'" label="'Proud'" data="device.measurements.current"></measurement>
-				<measurement type="'J/s'" label="'Energie'" data="device.measurements.energy"></measurement>
-				<measurement type="'Hz'" label="'0 Hz !!'" warning-text="'Výpadek sítě'" error-text="'Výpadek napájení!'" data="device.measurements.frequency"></measurement>
+				<measurement type="'°C'" label="'Teplota'" data="device.measurements.temperature"></measurement>
 			</div>
 	</div>
 </div>

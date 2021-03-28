@@ -24,6 +24,12 @@
                         </a>
                     </li>
                     <li role="presentation">
+                        <a href="#elmer2" aria-controls="elmer2" role="tab" data-toggle="tab" style="min-width:120px;">
+                            ElKrem
+                            <span ng-if="main.elmer2.ok">({{ main.elmer2.p1 + main.elmer2.p2 + main.elmer2.p3 }} W)</span>
+                        </a>
+                    </li>
+                    <li role="presentation">
                         <a href="#inverter" aria-controls="inverter" role="tab" data-toggle="tab" style="min-width:120px;">
                             Inverter 
                             <span ng-if="main.inverter.data.Body.Data">({{ main.inverter.data.Body.Data.Inverters[1]['P'] }} W)</span>
@@ -34,6 +40,7 @@
                             Statistiky
                         </a>
                     </li>
+                    <li class="pull-right" ng-if="totalWattsSaved > 0"><a href=""><i class="fa fa-battery-{{ totalWattsSavedBatteryIndicator }}"></i> {{ totalWattsSaved }} W</a></li>
                 </ul>
                     
                 <!-- Tab panes -->
@@ -42,6 +49,13 @@
                         <div class="col-md-12 col-sm-12 margin-bottom-large panel panel-chart">
                             <div class="text-center" ng-show="!main.elmer.ok"><span class="glyphicon glyphicon-refresh spinning"></span> Načítám graf</div>
                             <elmer-chart data="main.elmer" width="1100" height="120" columns="180" colors="['#603803', '#000000', '#aaaaaa']"></elmer-chart>
+                        </div>
+                    </div>
+                    <div role="tabpanel" class="tab-pane" id="elmer2">
+                        <div class="col-md-12 col-sm-12 margin-bottom-large panel panel-chart">
+                            <div class="text-center" ng-show="!main.elmer2.ok"><span class="glyphicon glyphicon-refresh spinning"></span> Načítám graf</div>
+                            <elmer-chart data="main.elmer2" width="1100" height="120" columns="180" colors="['#603803', '#000000', '#aaaaaa']"></elmer-chart>
+                            Total: {{ (main.elmer2.sumCharged / 1000).toFixed(1) }} kWh
                         </div>
                     </div>
                     <div role="tabpanel" class="tab-pane" id="inverter">
@@ -133,6 +147,7 @@
     <script src="./app/www/AppConfig.js"></script>
     <script src="./app/www/Devices.js"></script>
     <script src="./app/www/elmer/Elmer.js"></script>
+    <script src="./app/www/elmer/Elmer2.js"></script>
     <script src="./app/www/elmer/ElmerTextBox.js"></script>
     <script src="./app/www/elmer/ElmerGraph.js"></script>
     <script src="./app/www/elmer/ElmerOwerflowGraph.js"></script>

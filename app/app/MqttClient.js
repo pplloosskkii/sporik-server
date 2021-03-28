@@ -1,4 +1,5 @@
 var Elmer = require('./Elmer')();
+var Elmer2 = require('./Elmer2')();
 var DeviceRegulator = require('./DeviceRegulator2')();
 var DEBUG = require('./Debug');
 var firstMeasurement = null; // first elmer measurement is remembered
@@ -35,6 +36,14 @@ function initialize(client, devices) {
 				Elmer.setFirst();
 			}
 			DeviceRegulator.tick(Elmer, devices);
+		}
+
+		if (topic === 'sporik/elmer2') {
+			Elmer2.set(msg);
+			if (firstMeasurement === null) { // remember first measurement
+				firstMeasurement = new Date();
+				Elmer2.setFirst();
+			}
 		}
 
 		if (topic === 'sporik/connect') {

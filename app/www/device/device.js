@@ -111,7 +111,7 @@ sporikApp.directive('device', ['AppConfig', '$timeout', 'Devices', 'ModalService
 					modal.close.then(function(result) {
 						if (result === false) return;
 						//scope.device = angular.copy(result);
-						for (var i in {'autorun':1, 'autorun_max':1, 'alias':1, 'description':1, 'phase':1, 'max_consumption':1, 'priority': 1, 'is_linear':1 }) {
+						for (var i in {'autorun':1, 'autorun_max':1, 'alias':1, 'description':1, 'phase':1, 'max_consumption':1, 'priority': 1, 'is_linear':1, 'max_regulation':1 }) {
 							scope.device[i] = result[i];
 						}
 						scope.saveDevice();

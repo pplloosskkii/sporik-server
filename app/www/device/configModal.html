@@ -41,6 +41,9 @@
 						<div class="form-group" ng-if="device.autorun">
 							<p>Zadejte hodnotu regulace ve Wattech. Na tuto hodnotu bude regulována celková spotřeba na měřícím bodě. Výchozí hodnota je 0.</p>
 							<input type="number" ng-model="device.autorun_max" class="form-control">
+							<br/>
+							<p>Zadejte maximum výkonu v procentech (výchozí 100)</p>
+							<input type="number" ng-model="device.max_regulation" class="form-control">
 						</div>
 					</div>
 				</div>
